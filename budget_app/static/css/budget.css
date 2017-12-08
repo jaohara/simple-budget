@@ -21,8 +21,11 @@ body {
   padding-top: 50px; }
 
 /*	=====================
-	Transaction Container
+	Transaction Table
 	=====================	*/
+#transaction-table {
+  font-size: 0.8em; }
+
 /*	======
 	Charts
 	======	*/
