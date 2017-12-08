@@ -36,4 +36,13 @@ body {
   /* How do I center the span.input-group-addon span.icon elements? */
   /*min-width: 6em;*/ }
 
+/*	======
+	Footer
+	======	*/
+footer {
+  background: rgba(0, 0, 0, 0.15);
+  font-color: rgba(0, 0, 0, 0.8);
+  font-size: 0.8em;
+  padding: 4.0em 0em; }
+
 /*# sourceMappingURL=budget.css.map */

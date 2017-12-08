@@ -168,11 +168,22 @@ $(document).ready(function(){
 	}
 
 	// bind chart button toggler
-	$("#chartToggler").on("click", function(){
-		if (DEBUG)
-			console.log("click event recorded, toggling #chartJumbotron...");
+	$("#chart-toggler").on("click", function(){
+	});
 
-		$("#chartJumbotron").slideToggle(300);
+	$("#stat-toggler").on("click", function(){
+
+	});
+
+	$("a.section-toggle-link").on("click", function(event){
+		event.preventDefault();
+
+		var target = $(this).attr("toggle-target");
+		
+		if (DEBUG)
+			console.log("click event recorded, toggling " + target + "...");
+
+		$("#" + target).slideToggle(300);
 
 		if (DEBUG)
 			console.log("Toggle completed.");

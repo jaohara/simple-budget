@@ -18,67 +18,65 @@
     </head>
     <body>
 
-        <nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-dark"> <!-- maybe use light theme? -->
+        <nav class="navbar fixed-top navbar-expand-sm navbar-dark bg-dark"> <!-- maybe use light theme? -->
 
-            <a class="navbar-brand btn btn-primary" href="/">
-               <span class="icon ion-cash"></span>
+            <a class="navbar-brand" href="/">
+               <span class="icon ion-cash"></span> Simple Budget
             </a>
 
-            <ul class="navbar-nav">
-            {% if user.is_authenticated %}
-                <li class="nav-item">
-                    <span class="btn btn-success">
-                        $<span id="money-total">{{current_funds}}</span>
-                    </span>
-                </li>
-                <li class="nav-item">
-                    <button class="btn btn-dark active" id="chartToggler" data-toggle="button" aria-pressed="false">
-                        <span class="ion-icon ion-ios-pie-outline"></span>
-                    </button>
-                </li>
-            {% endif %}
-            </ul>
+            <div class="collapse navbar-collapse" id="navbar-content">
 
-            <ul class="navbar-nav ml-auto">
-            {% if user.is_authenticated %}
-                <li class="nav-item">
-                    <a class="btn btn-primary" href="#">
-                        <span class="icon ion-ios-person"></span> {{user.username}}
-                    </a>
-                </li>
-
-                <li class="nav-item">
-                    <a class="nav-link btn btn-primary" href="{% url 'logout' %}">Logout</a>
-                </li>
-            {% else %}
-                <li class="nav-item">
-                    <a class="nav-link btn btn-primary" href="{% url 'user_create' %}">
-                        <span class="icon ion-ios-personadd"> Register</span>
-                    </a>
-                </li>
-
-                <li class="nav-item">
-                    <a class="nav-link btn btn-primary" href="{% url 'login' %}">Login</a>
-                </li>
-            {% endif %}
-            </ul>
-
-
-            <!-- this is for the hamburger menu, hidden at widths above 992px -->
-            <!--
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-
-            <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <ul class="navbar-nav mr-auto">
-                    <li class="nav-item" href="/">
-                        <a class="nav-link" href="#">Placeholder</a>
+                <ul class="navbar-nav">
+                {% if user.is_authenticated %}
+                    <li class="nav-item">
+                        <span class="btn btn-success">
+                            $<span id="money-total">{{current_funds}}</span>
+                        </span>
                     </li>
+                    
+                    <li class="nav-item">
+                        <a class="nav-link section-toggle-link" href="" toggle-target="chart-jumbotron">
+                            Graphs <!---<span class="ion-icon ion-ios-pie-outline"></span>-->
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link section-toggle-link" href="" toggle-target="stat-jumbotron">
+                            Stats
+                        </a>
+                    </li>
+                {% endif %}
                 </ul>
+
+                <ul class="navbar-nav ml-auto">
+                {% if user.is_authenticated %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="">
+                            <span class="icon ion-ios-person"></span> {{user.username}}
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'logout' %}">Logout</a>
+                    </li>
+                {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'user_create' %}">
+                            <span class="icon ion-ios-personadd"> Register</span>
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'login' %}">Login</a>
+                    </li>
+                {% endif %}
+                </ul>
+
             </div>
 
-            -->
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-content" aria-controls="navbar-content" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
         </nav>
 
 
@@ -97,15 +95,17 @@
             {% endblock %}
         </div>
 
-        <div class="container footer-container" id="footer-container">
-            <div class="footer-left">
-                Copyright &copy;2017
-                <a href="http://johnaohara.com">John O'Hara</a>
+        <footer id="page-footer">
+            <div class="container" id="footer-container">
+                <div class="footer-left">
+                    Copyright &copy;2017
+                    <a href="http://johnaohara.com">John O'Hara</a>
+                </div>
+                <div class="footer-right">
+                    <a href="https://github.com/jaohara/">Github Repository</a>
+                </div>  
             </div>
-            <div class="footer-right">
-                <a href="https://github.com/jaohara/">Github Repository</a>
-            </div>
-        </div>
+        </footer>
 
 
         <script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
