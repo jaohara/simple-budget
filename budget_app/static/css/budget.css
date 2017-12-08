@@ -1,0 +1,39 @@
+/*
+	SCSS for Simple Budget App
+
+	Written by John O'Hara
+	http://github.com/jaohara
+*/
+/*	=====
+	Debug
+	=====	*/
+.debug-container {
+  display: none; }
+
+/*  ======
+	Navbar
+	======	*/
+/*	====
+	Body
+	====	*/
+body {
+  /* padding for navbar */
+  padding-top: 50px; }
+
+/*	=====================
+	Transaction Container
+	=====================	*/
+/*	===============
+	Chart Jumbotron
+	===============	*/
+#chart-jumbotron {
+  display: none; }
+
+/*  ===============
+	Forms and Input
+	===============	*/
+.input-group-addon {
+  /* How do I center the span.input-group-addon span.icon elements? */
+  /*min-width: 6em;*/ }
+
+/*# sourceMappingURL=budget.css.map */

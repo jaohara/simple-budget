@@ -1,0 +1,18 @@
+{% extends 'budget_app/base.html' %}
+
+{% block content %}
+
+	{% if not_post %}
+	request.method was not post.
+	{% else %}
+	<p>Memo - {{memo}}</p>
+	<p>Value - {{value}}</p>
+	<p>Category - {{category}}</p>
+
+	<p>Form (excluding Category) valid? {{form_valid}}</p>
+	<!--
+	<p>Value valid? {{value_valid}}</p>
+	<p>Category valid? {{category_valid}}</p>
+	-->
+	{% endif %}
+{% endblock %}

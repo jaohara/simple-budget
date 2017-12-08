@@ -1,0 +1,119 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+        <title>Simple Budget{% block pagetitle %}{% endblock %}</title>
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+
+        <link rel="stylesheet" href="{% static 'css/ionicons.css' %}">
+
+        <link rel="stylesheet" href="{% static 'css/budget.css' %}">
+
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.bundle.js"></script>
+    </head>
+    <body>
+
+        <nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-dark"> <!-- maybe use light theme? -->
+
+            <a class="navbar-brand btn btn-primary" href="/">
+               <span class="icon ion-cash"></span>
+            </a>
+
+            <ul class="navbar-nav">
+            {% if user.is_authenticated %}
+                <li class="nav-item">
+                    <span class="btn btn-success">
+                        $<span id="money-total">{{current_funds}}</span>
+                    </span>
+                </li>
+                <li class="nav-item">
+                    <button class="btn btn-dark active" id="chartToggler" data-toggle="button" aria-pressed="false">
+                        <span class="ion-icon ion-ios-pie-outline"></span>
+                    </button>
+                </li>
+            {% endif %}
+            </ul>
+
+            <ul class="navbar-nav ml-auto">
+            {% if user.is_authenticated %}
+                <li class="nav-item">
+                    <a class="btn btn-primary" href="#">
+                        <span class="icon ion-ios-person"></span> {{user.username}}
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link btn btn-primary" href="{% url 'logout' %}">Logout</a>
+                </li>
+            {% else %}
+                <li class="nav-item">
+                    <a class="nav-link btn btn-primary" href="{% url 'user_create' %}">
+                        <span class="icon ion-ios-personadd"> Register</span>
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link btn btn-primary" href="{% url 'login' %}">Login</a>
+                </li>
+            {% endif %}
+            </ul>
+
+
+            <!-- this is for the hamburger menu, hidden at widths above 992px -->
+            <!--
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item" href="/">
+                        <a class="nav-link" href="#">Placeholder</a>
+                    </li>
+                </ul>
+            </div>
+
+            -->
+        </nav>
+
+
+        <div class="jumbotron datachart-container" id="chart-jumbotron">
+            {% block datachart %}
+            {% endblock %}
+        </div>
+
+        <div class="container" id="transaction-container">
+            {% block transaction_container %}
+            {% endblock %}
+        </div>
+
+        <div class="container main-content" id="main-content">
+            {% block content %}
+            {% endblock %}
+        </div>
+
+        <div class="container footer-container" id="footer-container">
+            <div class="footer-left">
+                Copyright &copy;2017
+                <a href="http://johnaohara.com">John O'Hara</a>
+            </div>
+            <div class="footer-right">
+                <a href="https://github.com/jaohara/">Github Repository</a>
+            </div>
+        </div>
+
+
+        <script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
+        <script src="{% static 'js/budget.js'%}"></script>
+
+        {% block extra_js %}
+        {% endblock %}
+    </body>
+</html>

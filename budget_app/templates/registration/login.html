@@ -1,0 +1,18 @@
+{% extends "budget_app/base.html" %}
+
+{% block content %}
+
+<h1>Login</h1>
+
+{% if form.errors %}
+	<!-- this could probably be more comprehensive -->
+	<p>Your username and password don't match.</p>
+{% endif %}
+
+	<form method="post" action="{% url 'login' %}">
+	{% csrf_token %}
+		<p>{{form.username}} username</p>
+		<p>{{form.password}} password</p>
+		<p><input type="submit" value="Login"></p>
+	</form>
+{% endblock %}

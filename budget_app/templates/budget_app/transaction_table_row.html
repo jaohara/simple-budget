@@ -1,0 +1,18 @@
+<tr class="transaction-table-row" 
+id="transaction-{{transaction.pk}}"
+{% if hidden_initially %}style="display: none;"{% endif %}>
+	<!-- this should be a link to this date (rather, date range with range of this one day)-->
+    <td>{{transaction.date|date:"D m/d"}}</td>
+
+    <td>{{transaction.memo}}</td>
+    <!-- make this a link to that particular category -->
+    <td>{{transaction.category.name}}</td>
+    <!-- check to see if + or -, change td class based on that -->
+    <td>{{transaction.value}}</td>
+
+    <td class="text-">
+    	<a href="" class="btn btn-outline-danger text-center transaction-delete-button" delete-target="{{transaction.pk}}">
+    		<span class="icon ion-trash-a"></span>
+    	</a>
+    </td>
+</tr>

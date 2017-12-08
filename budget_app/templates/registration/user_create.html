@@ -1,0 +1,24 @@
+{% extends 'budget_app/base.html' %}
+
+{% block content %}
+
+<h1>Create an Account</h1>
+
+<!-- do I need this error check in the view? -->
+{% if form.errors %}
+	<p>There was an error with the creation of this account.</p>
+	{{ form.errors }}
+{% endif %}
+
+	<!-- TODO: extend both this and user_login.html from a shared template -->
+	<form method="post" action="{% url 'user_create' %}">
+		{% csrf_token %}
+		<p>{{form.username}}username</p>
+		<p>{{form.initial_funds}}initial funds</p>
+		<p>{{form.email}}email</p>
+		<p>{{form.password}}password</p>
+		<!-- should I do one of those password repeat things? -->
+		<p><input type="submit" value="Register"></p>
+	</form>
+
+{% endblock %}
