@@ -215,7 +215,7 @@ $(document).ready(function(){
 				if (DEBUG)
 					console.log(data.success + ": " + data.message);
 
-				var resultRow = $(data.transactionHtml).insertAfter("#transactionTable tr:first");
+				var resultRow = $(data.transactionHtml).insertAfter("#transaction-table tr:first");
 				$("#transactionForm").trigger("reset");
 
 				redrawCharts();

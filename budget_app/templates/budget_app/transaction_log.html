@@ -49,7 +49,7 @@
 {% endblock %}
 
 {% block transaction_container %}
-    <form method="POST" action="{% url 'transaction_add'%}" id="transactionForm">
+    <form method="POST" action="{% url 'transaction_add'%}" id="transaction-form">
         {% csrf_token %}
         {# transaction_form.as_p #}
 
