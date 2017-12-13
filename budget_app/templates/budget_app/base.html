@@ -20,19 +20,34 @@
 
         <nav class="navbar fixed-top navbar-expand-sm navbar-dark bg-dark"> <!-- maybe use light theme? -->
 
-            <a class="navbar-brand" href="/">
-               <span class="icon ion-cash"></span> Simple Budget
-            </a>
+            <span class="navbar-brand">
+                <a class="link-unstyled" href="/">
+                    <span class="icon ion-cash"></span> Simple Budget
+                </a>
+
+                {% if user.is_authenticated %}
+                    {% if current_funds < 0 %}
+                    <span class="btn btn-danger">
+                    {% else %}
+                    <span class="btn btn-success">
+                    {% endif %}
+                        $<span id="money-total">{{current_funds}}</span>
+                    </span>
+                {% endif %}
+            </span>
 
             <div class="collapse navbar-collapse" id="navbar-content">
 
                 <ul class="navbar-nav">
                 {% if user.is_authenticated %}
+
+                    <!--
                     <li class="nav-item">
                         <span class="btn btn-success">
                             $<span id="money-total">{{current_funds}}</span>
                         </span>
                     </li>
+                    -->
                     
                     <li class="nav-item">
                         <a class="nav-link section-toggle-link" href="" toggle-target="chart-jumbotron">
@@ -41,7 +56,7 @@
                     </li>
 
                     <li class="nav-item">
-                        <a class="nav-link section-toggle-link" href="" toggle-target="stat-jumbotron">
+                        <a class="nav-link section-toggle-link" href="" toggle-target="stats-jumbotron">
                             Stats
                         </a>
                     </li>
@@ -82,6 +97,11 @@
 
         <div class="jumbotron datachart-container" id="chart-jumbotron">
             {% block datachart %}
+            {% endblock %}
+        </div>
+
+        <div class="jumbotron stats-container" id="stats-jumbotron">
+            {% block stats %}
             {% endblock %}
         </div>
 

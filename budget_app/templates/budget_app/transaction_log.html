@@ -8,11 +8,7 @@
     {% endif %}
 {% endblock %}
 
-{% block datasummary %}
-
-    <canvas id="testChart">
-
-    <script>
+    <!--<script>
     /*
     var ctx = document.getElementById("testChart").getContext('2d');
     var myChart = new Chart(ctx, {
@@ -34,64 +30,7 @@
       }
     });
     */
-    </script>
-    <!--
-    <div class="card">
-        <div class="card-header"><h2>Summary</h2></div>
-
-        <ul class="list-group list-group-flush">
-            <li class="list-group-item">Current Funds: {{current_funds}}</li>
-            <li class="list-group-item">Monthly In: </li>
-            <li class="list-group-item">Monthly Out: </li>
-        </ul>
-    </div>
-    --> 
-{% endblock %}
-
-{% block transaction_container %}
-    <form method="POST" action="{% url 'transaction_add'%}" id="transaction-form">
-        {% csrf_token %}
-        {# transaction_form.as_p #}
-
-        {% for error in transaction_form.non_field_errors %}
-            <div class="form-group text-danger small">
-                {{errors}}
-            </div>
-        {% endfor%}
-
-        {% for field in transaction_form %}
-            <div class="form-group text-danger small">
-                {{field.errors}}
-            </div>
-            <div class="form-group">
-                <div class="input-group">
-                    <span class="input-group-addon">
-                        <!-- this is a little gross, but I'm not sure of a better way -->
-                        {% if field.label == "Value" %}
-                        <span class="icon ion-social-usd">
-                        {% elif field.label == "Memo"%}
-                        <span class="icon ion-ios-bookmarks">
-                        {% endif %}
-                        </span>
-                    </span>
-                    {{field}}
-                </div>
-            </div>
-        {% endfor %}
-        <div class="form-group">
-            <div class="input-group">
-                <span class="input-group-addon">
-                    <span class="icon ion-filing"></span>
-                </span>
-                <input class="form-control" type="text" name="category_string" id="categoryString" placeholder="Category">
-            </div>
-        </div>
-
-        <div class="form-group">
-            <input class="btn btn-primary" type="submit" value="Add Transaction">
-        </div>
-    </form>
-{% endblock %}
+    </script> -->
 
 {% block datachart %}
     <div id="chartCarousel" class="carousel slide" data-interval="false">
@@ -128,6 +67,70 @@
 
     <!-- this is getting kinda big, maybe this should be its own js script -->
 {% endblock %}
+
+{% block stats %}
+    <h1>Trends Over Time</h1>
+    <p>
+        This is where the stats go.
+    </p>
+
+    <p>
+        Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+        tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+        quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+        consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
+        cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
+        proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+    </p>
+{% endblock %}
+
+{% block transaction_container %}
+    <form method="POST" action="{% url 'transaction_add'%}" id="transaction-form">
+        {% csrf_token %}
+        {# transaction_form.as_p #}
+
+        {% for error in transaction_form.non_field_errors %}
+            <div class="form-group text-danger small">
+                {{errors}}
+            </div>
+        {% endfor%}
+
+        {% for field in transaction_form %}
+            <div class="form-group text-danger small">
+                {{field.errors}}
+            </div>
+            <div class="form-group">
+                <div class="input-group">
+                    <span class="input-group-addon">
+                        <!-- this is a little gross, but I'm not sure of a better way -->
+                        {% if field.label == "Value" %}
+                        <span class="icon ion-social-usd">
+                        {% elif field.label == "Memo"%}
+                        <span class="icon ion-ios-bookmarks">
+                        {% elif field.label == "Date" %}
+                        <span class="icon ion-ios-calendar-outline">
+                        {% endif %}
+                        </span>
+                    </span>
+                    {{field}}
+                </div>
+            </div>
+        {% endfor %}
+        <div class="form-group">
+            <div class="input-group">
+                <span class="input-group-addon">
+                    <span class="icon ion-filing"></span>
+                </span>
+                <input class="form-control" type="text" name="category_string" id="categoryString" placeholder="Category">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <input class="btn btn-primary" type="submit" value="Add Transaction">
+        </div>
+    </form>
+{% endblock %}
+
 
 {% block content %}
     <p class="debug-container">

@@ -22,6 +22,7 @@
 .navbar{
 
 
+
 }
 
 
@@ -32,6 +33,17 @@
 body{
 	/* padding for navbar */
 	padding-top: 50px;
+}
+
+/*	=====
+	Links
+	=====	*/
+
+a{
+	&.link-unstyled{
+		color: inherit;
+		text-decoration: inherit;
+	}
 }
 
 /*	=====================
@@ -56,6 +68,13 @@ body{
 }
 
 
+/*	=====
+	Stats
+	===== */
+
+#stats-jumbotron{
+	display: none;
+}
 
 
 /*  ===============

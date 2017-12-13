@@ -20,6 +20,13 @@ body {
   /* padding for navbar */
   padding-top: 50px; }
 
+/*	=====
+	Links
+	=====	*/
+a.link-unstyled {
+  color: inherit;
+  text-decoration: inherit; }
+
 /*	=====================
 	Transaction Table
 	=====================	*/
@@ -30,6 +37,12 @@ body {
 	Charts
 	======	*/
 #chart-jumbotron {
+  display: none; }
+
+/*	=====
+	Stats
+	===== */
+#stats-jumbotron {
   display: none; }
 
 /*  ===============

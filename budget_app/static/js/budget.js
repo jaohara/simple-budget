@@ -167,14 +167,6 @@ $(document).ready(function(){
         });
 	}
 
-	// bind chart button toggler
-	$("#chart-toggler").on("click", function(){
-	});
-
-	$("#stat-toggler").on("click", function(){
-
-	});
-
 	$("a.section-toggle-link").on("click", function(event){
 		event.preventDefault();
 

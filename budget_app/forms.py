@@ -6,18 +6,22 @@ from .models import Transaction
 
 class TransactionForm(forms.ModelForm):
 
-	value 	= forms.DecimalField(widget=forms.NumberInput(attrs={
-														  'class': 'form-control',
-														  'placeholder': 0.00,
-														  }))
-	memo 	= forms.CharField(widget=forms.TextInput(attrs={
-													'class': 'form-control',
-													'placeholder': 'Memo',
+	value = forms.DecimalField(widget=forms.NumberInput(attrs={
+														'class': 'form-control',
+														'placeholder': 0.00,
 													}))
+	memo = forms.CharField(widget=forms.TextInput(attrs={
+												  'class': 'form-control',
+												  'placeholder': 'Memo',
+												}))
+
+	#date = forms.DateTimeField(widget=forms.DateInput(attrs={'class': 'form-control',}))
+
 
 	class Meta:
 		model = Transaction
-		fields = ['value', 'memo',]
+		fields = ['value', 'memo']
+		#fields = ['value', 'memo', 'date']
 		#fields = ['category', 'memo', 'value',]
 		#widgets = {'category': forms.TextInput()}
 
