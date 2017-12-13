@@ -170,12 +170,20 @@ $(document).ready(function(){
 	$("a.section-toggle-link").on("click", function(event){
 		event.preventDefault();
 
-		var target = $(this).attr("toggle-target");
+		var target = $("#"+$(this).attr("toggle-target"));
 		
 		if (DEBUG)
 			console.log("click event recorded, toggling " + target + "...");
 
-		$("#" + target).slideToggle(300);
+		// check for and untoggle previously toggled element
+		$(".section-toggle-link").each(function(){
+			var currentElement = $("#" + $(this).attr("toggle-target"));
+
+			if (currentElement.is(":visible"))
+				currentElement.slideToggle(300);
+		});
+
+		target.slideToggle(300);
 
 		if (DEBUG)
 			console.log("Toggle completed.");
