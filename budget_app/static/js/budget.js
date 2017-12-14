@@ -203,10 +203,10 @@ $(document).ready(function(){
 
 
 	// handler for transaction form
-	$("#transactionForm").on("submit", function(event){
+	$("#transaction-form").on("submit", function(event){
 		event.preventDefault();
 		if (DEBUG)
-			console.log("#transactionForm submitted.");
+			console.log("#transaction-form submitted.");
 
 		var transValue 	= $(this).find("#id_value").val();
 		var transMemo  	= $(this).find("#id_memo").val();
@@ -228,7 +228,7 @@ $(document).ready(function(){
 					console.log(data.success + ": " + data.message);
 
 				var resultRow = $(data.transactionHtml).insertAfter("#transaction-table tr:first");
-				$("#transactionForm").trigger("reset");
+				$("#transaction-form").trigger("reset");
 
 				redrawCharts();
 			}
@@ -254,5 +254,11 @@ $(document).ready(function(){
 				redrawCharts();
 			}
 		});
+	});
+
+
+	// test handler for actions on datepicker
+	$("#date-range").on("change", function(){
+		console.log("Captured change event on input#date-range.");
 	});
 });
