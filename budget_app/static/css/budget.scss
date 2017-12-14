@@ -5,6 +5,16 @@
 	http://github.com/jaohara
 */
 
+// bootstrap colors
+$bs-primary: #007bff;
+$bs-secondary: #868e96;
+$bs-success: #28a745;
+$bs-danger: #dc3545;
+$bs-warning: #ffc107;
+$bs-info: #17a2b8;
+$bs-light: #f8f9fa;
+$bs-dark: #343a40;
+
 
 /*	=====
 	Debug
@@ -71,13 +81,40 @@ a{
 	/*min-width: 6em;*/
 }
 
-input.date-range {
-	background: rgba(0,0,0,0.05);
+input#date-range {
 	border: 0px;
-	border-radius: 5px;
 	font-weight: bold;
 	padding: 10px;
-	width: 5.5em;
+	width: 10.5em;
+
+	&:hover {
+		color: $bs-primary;
+		cursor: pointer;
+	}
+}
+
+/*	====================
+	Datepicker Overrides
+	====================	*/
+
+//overriding .datepicker--day-name from datepicker.min.css
+.datepicker--day-name{
+	color: $bs-primary;
+	font-weight: bold;
+}
+
+// pointer doesn't use all of these attributes but it saves redundancy with bg-color
+.datepicker--nav, .datepicker--pointer{
+	background-color: $bs-dark;
+	color: $bs-light;
+	font-weight: bold;
+}
+
+.datepicker--nav-action, .datepicker--nav-title{
+	&:hover{
+		background-color: rgba(255,255,255,0.1);
+		box-shadow: inset 0px 0px 4px rgba(0,0,0,0.1);
+	}
 }
 
 

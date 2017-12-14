@@ -46,13 +46,30 @@ a.link-unstyled {
   /* How do I center the span.input-group-addon span.icon elements? */
   /*min-width: 6em;*/ }
 
-input.date-range {
-  background: rgba(0, 0, 0, 0.05);
+input#date-range {
   border: 0px;
-  border-radius: 5px;
   font-weight: bold;
   padding: 10px;
-  width: 5.5em; }
+  width: 10.5em; }
+  input#date-range:hover {
+    color: #007bff;
+    cursor: pointer; }
+
+/*	====================
+	Datepicker Overrides
+	====================	*/
+.datepicker--day-name {
+  color: #007bff;
+  font-weight: bold; }
+
+.datepicker--nav, .datepicker--pointer {
+  background-color: #343a40;
+  color: #f8f9fa;
+  font-weight: bold; }
+
+.datepicker--nav-action:hover, .datepicker--nav-title:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  box-shadow: inset 0px 0px 4px rgba(0, 0, 0, 0.1); }
 
 /*	======
 	Footer

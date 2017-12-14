@@ -141,15 +141,20 @@
         <br><br>
     </p>
 
-    <input type="text" class="datepicker-here" data-language="en" data-range="true" readonly>
-
     <h2>Transactions</h2>
 
+    <label for="date-range">Date Range: </label>
+    <input type="text" readonly id="date-range" class="datepicker-here"
+    data-date-format="mm/dd/yy" data-language="en" data-multiple-dates-separator=" - " data-range="true" 
+    value="{{date_range_start}} - {{date_range_end}}"> 
+
+    <!--
     <input type="text" class="datepicker-here date-range" data-language="en" 
     value="{{date_range_start}}" id="date-range-start" readonly>
     - 
     <input type="text" class="datepicker-here date-range" data-language="en" 
     value="{{date_range_end}}" id="date-range-end" readonly>
+    -->
 
 
         <!--{{date_range_start}} - {{date_range_end}}-->
