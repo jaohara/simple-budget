@@ -46,6 +46,14 @@ a.link-unstyled {
   /* How do I center the span.input-group-addon span.icon elements? */
   /*min-width: 6em;*/ }
 
+input.date-range {
+  background: rgba(0, 0, 0, 0.05);
+  border: 0px;
+  border-radius: 5px;
+  font-weight: bold;
+  padding: 10px;
+  width: 5.5em; }
+
 /*	======
 	Footer
 	======	*/
