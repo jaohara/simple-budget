@@ -231,7 +231,8 @@ def transaction_form_debug(request):
 
 # returns categories similar to the query, used to populate auto-complete list
 # below category input field
-def category_lookup(request):
+def category_display(request, date_range_start=None, date_range_end=None):
+	
 
 	return redirect("/")
 

@@ -55,14 +55,14 @@
                     -->
                     
                     <li class="nav-item">
-                        <a class="nav-link section-toggle-link" href="" toggle-target="chart-jumbotron">
-                            Graphs <!---<span class="ion-icon ion-ios-pie-outline"></span>-->
+                        <a class="nav-link section-toggle-link" href="" toggle-target="trends-jumbotron">
+                            Trends <!---<span class="ion-icon ion-ios-pie-outline"></span>-->
                         </a>
                     </li>
 
                     <li class="nav-item">
-                        <a class="nav-link section-toggle-link" href="" toggle-target="stats-jumbotron">
-                            Stats
+                        <a class="nav-link section-toggle-link" href="" toggle-target="categories-jumbotron">
+                            Categories
                         </a>
                     </li>
                 {% endif %}
@@ -100,13 +100,13 @@
         </nav>
 
 
-        <div class="jumbotron datachart-container" id="chart-jumbotron">
-            {% block datachart %}
+        <div class="jumbotron trends-container" id="trends-jumbotron">
+            {% block trends %}
             {% endblock %}
         </div>
 
-        <div class="jumbotron stats-container" id="stats-jumbotron">
-            {% block stats %}
+        <div class="jumbotron categories-container" id="categories-jumbotron">
+            {% block categories %}
             {% endblock %}
         </div>
 

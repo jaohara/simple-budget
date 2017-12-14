@@ -33,16 +33,10 @@ a.link-unstyled {
 #transaction-table {
   font-size: 0.8em; }
 
-/*	======
-	Charts
-	======	*/
-#chart-jumbotron {
-  display: none; }
-
-/*	=====
-	Stats
-	===== */
-#stats-jumbotron {
+/*	==========
+	Jumbotrons
+	==========	*/
+#categories-jumbotron, #trends-jumbotron {
   display: none; }
 
 /*  ===============

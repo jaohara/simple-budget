@@ -54,28 +54,13 @@ a{
 	font-size: 0.8em;
 }
 
-/*	======
-	Charts
-	======	*/
+/*	==========
+	Jumbotrons
+	==========	*/
 
-#chart-jumbotron{
-	display: none;
-
-	canvas {
-		//height: 400px !important;
-		//width: 400px !important;
-	}
-}
-
-
-/*	=====
-	Stats
-	===== */
-
-#stats-jumbotron{
+#categories-jumbotron, #trends-jumbotron {
 	display: none;
 }
-
 
 /*  ===============
 	Forms and Input

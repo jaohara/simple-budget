@@ -170,8 +170,13 @@ $(document).ready(function(){
 	$("a.section-toggle-link").on("click", function(event){
 		event.preventDefault();
 
+		// is there a way to synchronize all of these animations better?
+		// I want to stage it so it scrolls, then after that the rest of the code executes.
+
+		$("html, body").animate({scrollTop: 0}, "slow");
+
 		var target = $("#"+$(this).attr("toggle-target"));
-		
+
 		if (DEBUG)
 			console.log("click event recorded, toggling " + target + "...");
 
@@ -179,7 +184,14 @@ $(document).ready(function(){
 		$(".section-toggle-link").each(function(){
 			var currentElement = $("#" + $(this).attr("toggle-target"));
 
-			if (currentElement.is(":visible"))
+
+			console.log(target.attr("id"));
+			console.log(currentElement.attr("id"));
+			console.log("is target id equal to currentElement id? " + (target.attr("id") == currentElement.attr("id")));
+			console.log("-----");
+
+			// toggle and hide current element 
+			if (currentElement.is(":visible") && currentElement.attr("id") != target.attr("id"))
 				currentElement.slideToggle(300);
 		});
 
