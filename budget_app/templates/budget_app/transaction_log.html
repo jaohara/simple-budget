@@ -146,35 +146,14 @@
     <!-- return to api to read on how to capture date change event -->
 
     <label for="date-range">Date Range: </label>
-    <input type="text" readonly id="date-range" class="datepicker-here"
+    <input type="text" readonly id="date-range" 
     data-date-format="mm/dd/yy" data-language="en" data-multiple-dates-separator=" - " data-range="true" 
     value="{{date_range_start}} - {{date_range_end}}"> 
 
-    <!--
-    <input type="text" class="datepicker-here date-range" data-language="en" 
-    value="{{date_range_start}}" id="date-range-start" readonly>
-    - 
-    <input type="text" class="datepicker-here date-range" data-language="en" 
-    value="{{date_range_end}}" id="date-range-end" readonly>
-    -->
-
-
-        <!--{{date_range_start}} - {{date_range_end}}-->
-
-
-    <table class="table table-hover transaction-table" id="transaction-table">
-        <tr class="transaction-table-header">
-            <!-- implement a sort_order thing to reorganize transactions -->
-            <th>Date</th>
-            <th>Memo</th>
-            <th>Category</th>
-            <th>Amount</th>
-            <th>Delete</th>
-        </tr>
-        {% for transaction in transactions %}
-            {% include 'budget_app/transaction_table_row.html' %}
-        {% endfor %}
-    </table>
+    <div id="table-wrapper">
+        {% include 'budget_app/transaction_table.html' %}
+        {# include 'budget_app/transaction_table_loader.html' #}
+    </div>
 {% endblock %}
 
 {% block extra_js %}
@@ -185,39 +164,10 @@
             {{dates_in_range|safe}}, $("#lineChartCanvas"));
         pieChart = drawPieChart({{sorted_expense_cat|safe}}, {{sorted_expense_val}}, $("pieChartCanvas"));
 
-
-        /*
-            Also, I want to bind this to the submit action of #transactionForm so this happens when a new
-            value is added.
-
-            If I want to add the ability to remove transactions (which I really should), this should also
-            fire on that case.
-        */
-
-        /*
-        //$("#ajaxRequestbutton").on("click", function(event){
-        $("#transactionForm").on("submit", function(event){
-            event.preventDefault();
-            $.ajax({
-                url: "/",
-                type: "GET",
-                success: function(data){
-                    console.log("Everything's working fine");
-
-                    console.log(data);
-
-                    // destroy and redraw the charts
-                    lineChart.destroy();
-                    pieChart.destroy();
-                    
-                    lineChart = drawLinechart(data.initial_funds, data.pos_change_vals, data.neg_change_vals,
-                        data.dates_in_range, $("#lineChartCanvas"));
-                    pieChart = drawPieChart(data.sorted_expense_cat, data.sorted_expense_val, 
-                        $("#pieChartCanvas"));
-                },
-            });
-        });
-        */
+        // set initial values for #date-range
+        var dateRangeArray = [new Date("{{date_start_iso}}"), new Date("{{date_end_iso}}")];
+        console.log(dateRangeArray);
+        $("#date-range").datepicker().data('datepicker').selectDate(dateRangeArray);
     });
     </script>
 {% endblock %}

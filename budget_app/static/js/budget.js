@@ -258,7 +258,40 @@ $(document).ready(function(){
 
 
 	// test handler for actions on datepicker
-	$("#date-range").on("change", function(){
-		console.log("Captured change event on input#date-range.");
+	/*
+	$("#date-range").on("select", function(){
+		console.log("Captured select event on input#date-range.");
+	});
+	*/
+
+	$("#date-range").datepicker({
+		maxDate: new Date(),
+		onSelect: function(formattedDate, date, inst) {
+			if (date.length > 1){
+				$("#transaction-table").remove();
+				$("#table-wrapper").append(load_spinner_html);
+
+				console.log("2 dates selected: " + date);
+				$.ajax({
+					url: "/",
+					type: "GET",
+					data: {
+						date_range_start: date[0].toISOString(),
+						date_range_end: date[1].toISOString()
+					},
+					success: function(data){
+						//console.log("tml to append: ");
+						//console.log(data.table_html);
+						console.log(data.date_range_start);
+						console.log(data.date_range_end);
+						$("#load-spinner").remove();
+						$("#table-wrapper").append(data.table_html);
+
+
+						//We're also going to want to redraw the line chart here
+					}
+				});
+			}
+		}
 	});
 });

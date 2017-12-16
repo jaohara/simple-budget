@@ -130,7 +130,9 @@
                     <a href="http://johnaohara.com">John O'Hara</a>
                 </div>
                 <div class="footer-right">
-                    <a href="https://github.com/jaohara/">Github Repository</a>
+                    <a href="https://github.com/jaohara/">
+                        <span class="icon ion-social-github"></span> Github Repository
+                    </a>
                 </div>  
             </div>
         </footer>
@@ -139,6 +141,11 @@
         <script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
+
+        <script>
+            var load_spinner_html = `{% include "budget_app/transaction_table_loader.html" %}`;
+        </script>
+
         <script src="{% static 'js/budget.js'%}"></script>
 
         {% block extra_js %}

@@ -1,0 +1,13 @@
+<table class="table table-hover transaction-table" id="transaction-table">
+    <tr class="transaction-table-header">
+        <!-- implement a sort_order thing to reorganize transactions -->
+        <th>Date</th>
+        <th>Memo</th>
+        <th>Category</th>
+        <th>Amount</th>
+        <th>Delete</th>
+    </tr>
+    {% for transaction in transactions %}
+        {% include 'budget_app/transaction_table_row.html' %}
+    {% endfor %}
+</table>

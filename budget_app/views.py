@@ -23,6 +23,14 @@ import pdb
 @login_required
 def transaction_log(request, sort_order="-date", date_range_start=None, date_range_end=None):
 
+	if "date_range_start" in request.GET:
+		date_range_start = dt.datetime.strptime(request.GET["date_range_start"][:10], "%Y-%m-%d")
+		date_range_start.replace(tzinfo=timezone.get_current_timezone())
+
+	if "date_range_end" in request.GET:
+		date_range_end = dt.datetime.strptime(request.GET["date_range_end"][:10], "%Y-%m-%d")
+		date_range_end.replace(tzinfo=timezone.get_current_timezone())
+
 	form = TransactionForm()
 
 	date_range 	= request.user.userrecord.def_date_range
@@ -99,10 +107,18 @@ def transaction_log(request, sort_order="-date", date_range_start=None, date_ran
 
 	# pdb.set_trace()
 
+	"""
+		Something to think about - I explicitly format the date in the US m/d/y format here,
+		and I assume that it's formatted that way in the javascript when I parse the string
+		to construct date objects. This doesn't account for someone using a european d/m/y format.
+	"""
+
 	render_context = {'current_funds': current_funds,
 				  	  'daily_sums': daily_sums,
 				  	  'date_range_start': date_range_start.strftime("%-m/%-d/%y"),
 				  	  'date_range_end': date_range_end.strftime("%-m/%-d/%y"),
+				  	  'date_start_iso': date_range_start.isoformat(),
+				  	  'date_end_iso': date_range_end.isoformat(),
 					  'dates_in_range': dates_in_range,
 					  'funds_change': funds_change,
 					  'initial_funds': initial_funds,
@@ -113,10 +129,12 @@ def transaction_log(request, sort_order="-date", date_range_start=None, date_ran
 					  'sorted_income_cat': sorted_income_cat[:max_display_categories],
 					  'sorted_income_val': sorted_income_val[:max_display_categories],
 				  	  'username': request.user.username,
-				  	  #"failure": fail_snail,
 				  	  }
 
 	if request.is_ajax():
+		table_html = render_to_string('budget_app/transaction_table.html', 
+									 {'transactions': range_transactions})
+		render_context['table_html'] = table_html
 		return JsonResponse(render_context)
 	else:
 		# add in the non-Json-serializable objects for actual render
@@ -232,7 +250,7 @@ def transaction_form_debug(request):
 # returns categories similar to the query, used to populate auto-complete list
 # below category input field
 def category_display(request, date_range_start=None, date_range_end=None):
-	
+
 
 	return redirect("/")
 
