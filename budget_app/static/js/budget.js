@@ -208,19 +208,29 @@ $(document).ready(function(){
 		if (DEBUG)
 			console.log("#transaction-form submitted.");
 
-		var transValue 	= $(this).find("#id_value").val();
-		var transMemo  	= $(this).find("#id_memo").val();
-		var transCat   	= $(this).find("#categoryString").val();
+		var targetURL = $(this).attr("action");
 
-		console.log(transValue + " " + transMemo + " " + transCat);
+		var transValue = $(this).find("#id_value").val();
+		var transMemo = $(this).find("#id_memo").val();
+		var transCat = $(this).find("#category-string").val();
+		//var transDate = $(this).find("#date-string").datepicker().data('datepicker').date.toISOString();
+		/* 
+			this doesn't seem like the best way to do this, but the above method isn't working. No clue why.
+			I'm running into the same problem in the devtools console - I can keep pulling the date from 
+			datepicker().data('datepicker'), but it doesn't update when the date changes. 
+		*/
+		var transDate = new Date($(this).find("#date-string").val()).toISOString();
+
+		console.log(transValue + " " + transMemo + " " + transCat + " " + transDate);
 
 		$.ajax({
-			url: "transaction/add",
+			url: targetURL,
 			context: this,
 			data: {
 				value: transValue,
 				memo: transMemo,
-				category_string: transCat
+				category_string: transCat,
+				date_string: transDate
 			},
 			type: 'POST',
 			success: function(data){
@@ -244,7 +254,7 @@ $(document).ready(function(){
 			console.log("Deleting transaction " + transactionTarget + "...");
 
 		$.ajax({
-			url: "transaction/delete",
+			url: "/transaction/delete",
 			data: {"transaction_pk": transactionTarget},
 			type: "POST",
 			success: function(data){
@@ -264,6 +274,18 @@ $(document).ready(function(){
 	});
 	*/
 
+	//initialize transdaction form datepicker
+	//again - I really don't like this id name
+	$("#date-string").datepicker({
+		maxDate: new Date(),
+		onSelect: function(formattedDate, date, inst) {
+			console.log("onSelect registered on #date-string: ");
+			console.log("formattedDate: " + formattedDate);
+			console.log("date: " + date);
+			console.log("inst: " + inst);
+		}
+	});
+
 	$("#date-range").datepicker({
 		maxDate: new Date(),
 		onSelect: function(formattedDate, date, inst) {
@@ -280,8 +302,6 @@ $(document).ready(function(){
 						date_range_end: date[1].toISOString()
 					},
 					success: function(data){
-						//console.log("tml to append: ");
-						//console.log(data.table_html);
 						console.log(data.date_range_start);
 						console.log(data.date_range_end);
 						$("#load-spinner").remove();

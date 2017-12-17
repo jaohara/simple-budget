@@ -21,34 +21,48 @@ import pdb
 	=========================
 """
 @login_required
-def transaction_log(request, sort_order="-date", date_range_start=None, date_range_end=None):
+def transaction_log(request, sort_order="-date", date_range_start=None, date_range_end=None, all_boolean=None):
 
-	if "date_range_start" in request.GET:
-		date_range_start = dt.datetime.strptime(request.GET["date_range_start"][:10], "%Y-%m-%d")
-		date_range_start.replace(tzinfo=timezone.get_current_timezone())
+	"""
+		I'm running into headaches when I strip the datetime down to just a date object as the 
+		date object is always naive. When I pass these to the JS Date constructor in the frontend 
+		they are manually adding the timezone offset (in my case, -8 for pacific time) to midnight
+		of the giving date, making every datetime represent 4pm on the previous date which is
+		causing the bounds to not be accurate.
+	"""
 
-	if "date_range_end" in request.GET:
-		date_range_end = dt.datetime.strptime(request.GET["date_range_end"][:10], "%Y-%m-%d")
-		date_range_end.replace(tzinfo=timezone.get_current_timezone())
-
-	form = TransactionForm()
-
-	date_range 	= request.user.userrecord.def_date_range
-	user_joined = timezone.localtime(request.user.date_joined)
+	# this is a bit wonky - I need the beginning of the day for the timezone-aware version of the date
+	# when the user joined. This seems like the best way to make this happen. 
+	user_joined = timezone.localtime(request.user.date_joined).replace(hour=0, minute=0, second=0, microsecond=0)
 	initial_funds = request.user.userrecord.initial_funds
-
+	
+	form = TransactionForm()
 	max_display_categories = request.user.userrecord.max_display_categories
 
 	curr_datetime = timezone.localtime(timezone.now())
-	today_start	= dt.datetime(year=curr_datetime.year,
-							  month=curr_datetime.month,
-							  day=curr_datetime.day,
-							  tzinfo=timezone.get_current_timezone())
+
+	if (bool(all_boolean)):
+		date_range_start = user_joined
+
+	else:
+		if "date_range_start" in request.GET:
+			date_range_start = dt.datetime.strptime(request.GET["date_range_start"][:10], "%Y-%m-%d")
+			date_range_start.replace(tzinfo=timezone.get_current_timezone())
+
+		if "date_range_end" in request.GET:
+			date_range_end = dt.datetime.strptime(request.GET["date_range_end"][:10], "%Y-%m-%d")
+			date_range_end.replace(tzinfo=timezone.get_current_timezone())
+
+
+	date_range 	= request.user.userrecord.def_date_range
 
 	if date_range_start is None:
 		date_range_start = user_joined if user_joined > curr_datetime - date_range \
 							  		   else curr_datetime - date_range
 	date_range_end = curr_datetime if date_range_end is None else date_range_end
+
+
+	# date_range_start and date_range_end need to equal their .date() values by now
 	applied_date_range = date_range_end.date() - date_range_start.date()
 
 	dates_in_range = []
@@ -60,9 +74,8 @@ def transaction_log(request, sort_order="-date", date_range_start=None, date_ran
 			date_added = date_range_start + dt.timedelta(days=day)
 			dates_in_range.append(date_added.strftime("%-m/%-d"))
 
- 
 	all_transactions = Transaction.objects.filter(user__pk=request.user.pk)
-	range_transactions = all_transactions.filter(date__gte=date_range_start, 
+	range_transactions = all_transactions.filter(date__gte=date_range_start.date(), 
 						  date__lte=date_range_end).order_by(sort_order)
 
 	funds_change = sum(transaction.value for transaction in all_transactions) 
@@ -73,7 +86,10 @@ def transaction_log(request, sort_order="-date", date_range_start=None, date_ran
 
 	for transaction in range_transactions:
 		sign = "pos" if transaction.value > 0 else "neg"
-		category = transaction.category.name if transaction.category.name is not "" else "Uncategorized"
+		#category = transaction.category.name if transaction.category.name is not "" \
+		#	and transaction.category is not None else "Uncategorized"
+		category = "Uncategorized" if transaction.category is None or transaction.category.name is "" \
+			else transaction.category.name
 		date = timezone.localtime(transaction.date).strftime("%-m/%-d")
 
 		#pdb.set_trace()
@@ -102,11 +118,6 @@ def transaction_log(request, sort_order="-date", date_range_start=None, date_ran
 
 	daily_sums = [0+conv_pos_change[i]+conv_neg_change[i] for i in range(len(conv_pos_change))]
 
-	#include a request.is_ajax() check to return this data as a JSON object to update the 
-	# charts without reloading the page
-
-	# pdb.set_trace()
-
 	"""
 		Something to think about - I explicitly format the date in the US m/d/y format here,
 		and I assume that it's formatted that way in the javascript when I parse the string
@@ -117,8 +128,9 @@ def transaction_log(request, sort_order="-date", date_range_start=None, date_ran
 				  	  'daily_sums': daily_sums,
 				  	  'date_range_start': date_range_start.strftime("%-m/%-d/%y"),
 				  	  'date_range_end': date_range_end.strftime("%-m/%-d/%y"),
-				  	  'date_start_iso': date_range_start.isoformat(),
 				  	  'date_end_iso': date_range_end.isoformat(),
+				  	  'date_start_bound': user_joined.isoformat(),
+				  	  'date_start_iso': date_range_start.isoformat(),
 					  'dates_in_range': dates_in_range,
 					  'funds_change': funds_change,
 					  'initial_funds': initial_funds,
@@ -160,11 +172,15 @@ def transaction_add(request):
 				# this should be a form is not valid error state
 				return redirect("/")
 
-		transaction.user 	= request.user
-		category_name 		= request.POST.get("category_string")
-		existing_category 	= Category.objects.filter(name=category_name).first()
+		transaction.user = request.user
+		category_name = request.POST.get("category_string")
+		existing_category = Category.objects.filter(name=category_name).first()
 
 		transaction.category = existing_category if existing_category is not None else Category.objects.create(name=category_name)
+
+		if "date_string" in request.POST:
+			transaction.date = dt.datetime.strptime(request.POST.get("date_string")[:10], "%Y-%m-%d")
+			transaction.date.replace(tzinfo=timezone.get_current_timezone())
 
 		transaction.save()
 

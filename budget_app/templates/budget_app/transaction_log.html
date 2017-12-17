@@ -77,7 +77,7 @@
 {% endblock %}
 
 {% block transaction_container %}
-    <form method="POST" action="{% url 'transaction_add'%}" id="transaction-form">
+    <form method="POST" action="{% url 'transaction_add' %}" id="transaction-form">
         {% csrf_token %}
         {# transaction_form.as_p #}
 
@@ -99,8 +99,6 @@
                         <span class="icon ion-social-usd">
                         {% elif field.label == "Memo"%}
                         <span class="icon ion-ios-bookmarks">
-                        {% elif field.label == "Date" %}
-                        <span class="icon ion-ios-calendar-outline">
                         {% endif %}
                         </span>
                     </span>
@@ -113,7 +111,17 @@
                 <span class="input-group-addon">
                     <span class="icon ion-filing"></span>
                 </span>
-                <input class="form-control" type="text" name="category_string" id="categoryString" placeholder="Category">
+                <input class="form-control" type="text" name="category_string" id="category-string" placeholder="Category">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="input-group">
+                <span class="input-group-addon">
+                    <span class="icon ion-ios-calendar-outline"></span>
+                </span>
+                <input class="form-control" type="text" name="date_string" id="date-string"
+                data-date-format="mm/dd/yy" data-language="en">
             </div>
         </div>
 
@@ -125,34 +133,17 @@
 
 
 {% block content %}
-    <p class="debug-container">
-        Leaving a little note here where I'll see it - I think This entire "add a transaction" section
-        should be a drop down part of the main nav bar. This is the core feature of the site, so it should be 
-        up front and convenient. Anyway, I'm going to go to bed now. 
-        <br><br>
-        Also, I need to look in how to add more options to the nav bar. I think I want each displayed chart
-        or whatever to be an option on the main nav bar panel as opposed to a container on the main page.
-        <br><br>
-        Think like an icon bar.
-        <br><br>
-        Oh, and I need to add the ability to change the transaction date. There should be a drop down calendar thing with the default option being today.
-        <br><br>
-        And an auto-complete category thing.
-        <br><br>
-    </p>
-
     <h2>Transactions</h2>
-
-    <!-- return to api to read on how to capture date change event -->
 
     <label for="date-range">Date Range: </label>
     <input type="text" readonly id="date-range" 
     data-date-format="mm/dd/yy" data-language="en" data-multiple-dates-separator=" - " data-range="true" 
-    value="{{date_range_start}} - {{date_range_end}}"> 
+    value="{{date_range_start}} - {{date_range_end}}">
+
+    <a href="{% url 'transaction_log' all_boolean='all' %}" id="date-range-all" class="">All Time</a>
 
     <div id="table-wrapper">
         {% include 'budget_app/transaction_table.html' %}
-        {# include 'budget_app/transaction_table_loader.html' #}
     </div>
 {% endblock %}
 
@@ -164,10 +155,12 @@
             {{dates_in_range|safe}}, $("#lineChartCanvas"));
         pieChart = drawPieChart({{sorted_expense_cat|safe}}, {{sorted_expense_val}}, $("pieChartCanvas"));
 
-        // set initial values for #date-range
         var dateRangeArray = [new Date("{{date_start_iso}}"), new Date("{{date_end_iso}}")];
-        console.log(dateRangeArray);
         $("#date-range").datepicker().data('datepicker').selectDate(dateRangeArray);
+        $("#date-range").datepicker().data('datepicker').update('minDate', new Date("{{date_start_bound}}"));
+
+        $("#date-string").datepicker().data('datepicker').selectDate(new Date());
+        $("#date-string").datepicker().data('datepicker').update('minDate', new Date("{{date_start_bound}}"));
     });
     </script>
 {% endblock %}

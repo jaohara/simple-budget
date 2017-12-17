@@ -11,6 +11,8 @@ id="transaction-{{transaction.pk}}"
     <td>{{transaction.value}}</td>
 
     <td class="text-">
+
+        <!-- I need to make a non-ajax fallback and url route for this -->
     	<a href="" class="btn btn-outline-danger text-center transaction-delete-button" delete-target="{{transaction.pk}}">
     		<span class="icon ion-trash-a"></span>
     	</a>
