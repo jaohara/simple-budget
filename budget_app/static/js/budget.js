@@ -314,4 +314,15 @@ $(document).ready(function(){
 			}
 		}
 	});
+
+	$("#id_password_repeat").on("blur", function(){
+		// check to see if passwords match. very basic warning now, return to this later
+		if ($(this).val() == $("#id_password").val()){
+			$(".budget-password").css("box-shadow", "inset 0px 0px 8px rgba(0,255,0,0.5)");
+			$(".budget-password").css("background", "rgba(0,255,0,0.15)");
+		} else {
+			$(".budget-password").css("box-shadow", "inset 0px 0px 8px rgba(255,0,0,0.5)");
+			$(".budget-password").css("background", "rgba(255,0,0,0.15)");
+		}
+	});
 });

@@ -2,23 +2,68 @@
 
 {% block content %}
 
-<h1>Create an Account</h1>
+<!-- TODO: extend both this and user_login.html from a shared template -->
+<div class="container col-sm budget-authentication-container">
+	<h1>Register</h1>
 
-<!-- do I need this error check in the view? -->
-{% if form.errors %}
-	<p>There was an error with the creation of this account.</p>
-	{{ form.errors }}
-{% endif %}
+		<form method="POST" action="{% url 'login' %}" id="login-registration-form">
+			
+			{% csrf_token %}
 
-	<!-- TODO: extend both this and user_login.html from a shared template -->
-	<form method="post" action="{% url 'user_create' %}">
-		{% csrf_token %}
-		<p>{{form.username}}username</p>
-		<p>{{form.initial_funds}}initial funds</p>
-		<p>{{form.email}}email</p>
-		<p>{{form.password}}password</p>
-		<!-- should I do one of those password repeat things? -->
-		<p><input type="submit" value="Register"></p>
-	</form>
+			{% for error in form.non_field_errors%}
+				<div class="form-group text-danger small">
+					{{ error }}
+				</div>
+			{% endfor %}
+
+			{% for field in form%}
+				<div class="form-group text-danger small">
+					{{field.errors}}
+				</div>
+
+				<div class="form-group">
+					{% if field.label == "Initial Funds" %}
+					<p>Please enter initial funds: </p>
+					{% endif %}
+					<div class="input-group">
+						<span class="input-group-addon">
+							{% if field.label == "Username" %}
+							<span class="icon ion-ios-person">
+							{% elif field.label == "Password" %}
+							<span class="icon ion-key">
+							{% elif field.label == "Email" %}
+							<span class="icon ion-email">
+							{% elif field.label == "Initial Funds" %}
+							<span class="icon ion-social-usd">
+							{% endif %}
+							</span>
+						</span>
+						{{field}}
+					</div>
+
+					{# gonna need to repeat this mofo if we're a password. less redundant way? #}
+					
+				</div>
+
+				{% if field.label == "Password" %}
+				<div class="form-group">
+					<div class="input-group">
+						<span class="input-group-addon">
+							<span class="icon ion-key">
+							</span>
+						</span>
+						<input type="password" name="password-repeat" 
+						class="form-control budget-password" placeholder="Password (again)" 
+						required id="id_password_repeat">
+					</div>
+				</div>
+				{% endif %}
+			{% endfor %}
+
+			<div class="form-group">
+				<input class="btn btn-primary" type="submit" value="Login">
+			</div>
+		</form>
+</div>
 
 {% endblock %}

@@ -61,6 +61,13 @@ input#date-range {
     color: #007bff;
     cursor: pointer; }
 
+.budget-authentication-container {
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 5px;
+  margin: 4em auto;
+  max-width: 576px;
+  padding: 3em; }
+
 /*	====================
 	Datepicker Overrides
 	====================	*/
@@ -81,9 +88,9 @@ input#date-range {
 	Footer
 	======	*/
 footer {
-  background: rgba(0, 0, 0, 0.15);
   color: rgba(0, 0, 0, 0.8);
   font-size: 0.8em;
-  padding: 4.0em 0em; }
+  padding: 4.0em 0em;
+  text-align: center; }
 
 /*# sourceMappingURL=budget.css.map */

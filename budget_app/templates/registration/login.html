@@ -2,17 +2,47 @@
 
 {% block content %}
 
-<h1>Login</h1>
+<!-- 
+	could I remove this and use this template for both login and registration without it being 
+	ambiguous for the user?
+--> 
 
-{% if form.errors %}
-	<!-- this could probably be more comprehensive -->
-	<p>Your username and password don't match.</p>
-{% endif %}
+<div class="container col-sm budget-authentication-container">
+	<h1>Login</h1>
 
-	<form method="post" action="{% url 'login' %}">
-	{% csrf_token %}
-		<p>{{form.username}} username</p>
-		<p>{{form.password}} password</p>
-		<p><input type="submit" value="Login"></p>
-	</form>
+		<form method="POST" action="{% url 'login' %}" id="login-registration-form">
+			
+			{% csrf_token %}
+
+			{% for error in form.non_field_errors%}
+				<div class="form-group text-danger small">
+					{{ error }}
+				</div>
+			{% endfor %}
+
+			{% for field in form%}
+				<div class="form-group text-danger small">
+					{{field.errors}}
+				</div>
+
+				<div class="form-group">
+					<div class="input-group">
+						<span class="input-group-addon">
+							{% if field.label == "Username" %}
+							<span class="icon ion-ios-person">
+							{% elif field.label == "Password" %}
+							<span class="icon ion-key">
+							{% endif %}
+							</span>
+						</span>
+						{{field}}
+					</div>
+				</div>
+			{% endfor %}
+
+			<div class="form-group">
+				<input class="btn btn-primary" type="submit" value="Login">
+			</div>
+		</form>
+</div>
 {% endblock %}

@@ -17,10 +17,12 @@ from django.conf.urls import include, url
 from django.contrib import admin
 from django.contrib.auth import views as auth_views
 
+from budget_app.forms import BudgetAuthenticationForm
+
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'', include('budget_app.urls')),
 
-    url(r'user/login/$', auth_views.LoginView.as_view(), name="login"),
+    url(r'user/login/$', auth_views.LoginView.as_view(authentication_form=BudgetAuthenticationForm), name="login"),
     url(r'user/logout/$', auth_views.LogoutView.as_view(next_page="/"), name="logout"),
 ]

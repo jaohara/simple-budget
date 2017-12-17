@@ -103,6 +103,15 @@ input#date-range {
 	}
 }
 
+// used for login and registration forms
+.budget-authentication-container{
+	background: rgba(0,0,0,0.05);
+	border-radius: 5px;
+	margin: 4em auto;
+	max-width: 576px;
+	padding: 3em;
+}
+
 /*	====================
 	Datepicker Overrides
 	====================	*/
@@ -133,8 +142,9 @@ input#date-range {
 	======	*/
 
 footer{
-	background: rgba(0,0,0,0.15);
+	//background: rgba(0,0,0,0.05);
 	color: rgba(0,0,0,0.8);
 	font-size: 0.8em;
 	padding: 4.0em 0em;
+	text-align: center;
 }
