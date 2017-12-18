@@ -84,6 +84,8 @@ def transaction_log(request, sort_order="-date", date_range_start=None, date_ran
 
 	category_dict = {"pos":{}, "neg":{}}
 
+	statistics_list = []
+
 	for transaction in range_transactions:
 		sign = "pos" if transaction.value > 0 else "neg"
 		#category = transaction.category.name if transaction.category.name is not "" \
@@ -116,6 +118,19 @@ def transaction_log(request, sort_order="-date", date_range_start=None, date_ran
 	conv_pos_change = list(map(float, pos_change_dict.values()))
 	conv_neg_change = list(map(float, neg_change_dict.values()))
 
+	# is there a prettier way to do this? Maybe make a method?
+	# Also those names are gross
+	# Currency formatting also isn't determined by locale but hardcoded to USD
+	statistics_list.append({"name": "Cumulative Daily In Over Range: ", 
+							"value": "${:,.2f}".format(sum(conv_pos_change))})
+	statistics_list.append({"name": "Cumulative Daily Out Over Range: ", 
+							"value": "${:,.2f}".format(sum(conv_neg_change))})
+	statistics_list.append({"name": "Average Daily In Over Range: ", 
+							"value": "${:,.2f}".format(sum(conv_pos_change)/len(conv_pos_change))})
+	statistics_list.append({"name": "Average Daily Out Over Range: ", 
+							"value": "${:,.2f}".format(sum(conv_neg_change)/len(conv_neg_change))})
+
+
 	daily_sums = [0+conv_pos_change[i]+conv_neg_change[i] for i in range(len(conv_pos_change))]
 
 	"""
@@ -142,6 +157,9 @@ def transaction_log(request, sort_order="-date", date_range_start=None, date_ran
 					  'sorted_income_val': sorted_income_val[:max_display_categories],
 				  	  'username': request.user.username,
 				  	  }
+
+	if len(statistics_list) > 0:
+		render_context['statistics_list'] = statistics_list
 
 	if request.is_ajax():
 		table_html = render_to_string('budget_app/transaction_table.html', 

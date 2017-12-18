@@ -308,6 +308,8 @@ $(document).ready(function(){
 						$("#load-spinner").remove();
 						$("#table-wrapper").append(data.table_html);
 
+						$("#trends-header-range").html($("#date-range").val());
+
 
 						//We're also going to want to redraw the line chart here
 					}

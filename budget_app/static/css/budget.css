@@ -18,7 +18,7 @@
 	====	*/
 body {
   /* padding for navbar */
-  padding-top: 50px; }
+  padding-top: 64px; }
 
 /*	=====
 	Links
@@ -44,6 +44,23 @@ a.link-unstyled {
 	==========	*/
 #categories-jumbotron, #trends-jumbotron {
   display: none; }
+
+div.canvas-wrapper {
+  margin: 2em auto;
+  width: 95% !important; }
+
+/* 	==========
+	Stat Cards
+	==========	*/
+#trends-stats {
+  margin: 3em auto 0em auto;
+  max-width: 576px; }
+  #trends-stats .card-header {
+    font-size: 1.2em;
+    font-weight: bold; }
+
+.statistic_value {
+  float: right; }
 
 /*  ===============
 	Forms and Input

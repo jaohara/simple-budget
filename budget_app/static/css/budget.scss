@@ -42,7 +42,7 @@ $bs-dark: #343a40;
 
 body{
 	/* padding for navbar */
-	padding-top: 50px;
+	padding-top: 64px;
 }
 
 /*	=====
@@ -69,7 +69,7 @@ a{
 	Table Loader
 	============	*/
 
-#load-spinner{
+#load-spinner {
 	text-align: center;
 }
 
@@ -82,11 +82,35 @@ a{
 	display: none;
 }
 
+// ugly, but these charts are hard to style
+div.canvas-wrapper {
+	margin: 2em auto;
+	width: 95% !important;
+}
+
+/* 	==========
+	Stat Cards
+	==========	*/
+
+#trends-stats {
+	margin: 3em auto 0em auto;
+	max-width: 576px;
+
+	.card-header {
+		font-size: 1.2em;
+		font-weight: bold;
+	}
+}
+
+.statistic_value {
+	float: right;
+}
+
 /*  ===============
 	Forms and Input
 	===============	*/
 
-.input-group-addon{
+.input-group-addon {
 	/* How do I center the span.input-group-addon span.icon elements? */
 	/*min-width: 6em;*/
 }
