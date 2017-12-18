@@ -239,6 +239,7 @@ $(document).ready(function(){
 
 				var resultRow = $(data.transactionHtml).insertAfter("#transaction-table tr:first");
 				$("#transaction-form").trigger("reset");
+				$("#date-string").datepicker().data('datepicker').selectDate(new Date());
 
 				redrawCharts();
 			}
