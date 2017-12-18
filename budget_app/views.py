@@ -197,8 +197,9 @@ def transaction_add(request):
 		transaction.category = existing_category if existing_category is not None else Category.objects.create(name=category_name)
 
 		if "date_string" in request.POST:
-			transaction.date = dt.datetime.strptime(request.POST.get("date_string")[:10], "%Y-%m-%d")
-			transaction.date.replace(tzinfo=timezone.get_current_timezone())
+			received_date = dt.datetime.strptime(request.POST.get("date_string")[:10], "%Y-%m-%d")
+			received_date.replace(tzinfo=timezone.get_current_timezone())
+			transaction.date = received_date
 
 		transaction.save()
 
