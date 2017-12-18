@@ -133,9 +133,6 @@
 
 
 {% block content %}
-
-    <p id="date-test-paragraph"></p>
-
     <h2>Transactions</h2>
 
     <label for="date-range">Date Range: </label>
@@ -164,10 +161,6 @@
 
         $("#date-string").datepicker().data('datepicker').selectDate(new Date());
         $("#date-string").datepicker().data('datepicker').update('minDate', new Date("{{date_start_bound}}"));
-
-
-        // remove after date-test is done
-        $("#date-test-paragraph").html(new Date());
     });
     </script>
 {% endblock %}
