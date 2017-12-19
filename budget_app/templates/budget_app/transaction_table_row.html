@@ -2,16 +2,17 @@
 id="transaction-{{transaction.pk}}"
 {% if hidden_initially %}style="display: none;"{% endif %}>
 	<!-- this should be a link to this date (rather, date range with range of this one day)-->
-    <td>{{transaction.date|date:"D m/d"}}</td>
+    <td class="transaction-table-row-date" data-date='{{ transaction.date|date:"Y-m-d"}}'>
+        {{transaction.date|date:"D m/d"}}
+    </td>
 
-    <td>{{transaction.memo}}</td>
+    <td class="transaction-table-row-memo">{{transaction.memo}}</td>
     <!-- make this a link to that particular category -->
-    <td>{{transaction.category.name}}</td>
+    <td class="transaction-table-row-name">{{transaction.category.name}}</td>
     <!-- check to see if + or -, change td class based on that -->
-    <td>{{transaction.value}}</td>
+    <td class="transaction-table-row-value">{{transaction.value}}</td>
 
-    <td class="text-">
-
+    <td class="transaction-table-row-delete">
         <!-- I need to make a non-ajax fallback and url route for this -->
     	<a href="" class="btn btn-outline-danger text-center transaction-delete-button" delete-target="{{transaction.pk}}">
     		<span class="icon ion-trash-a"></span>

@@ -11,8 +11,9 @@ from .models import Category, Transaction, Bill, UserRecord
 from .forms import TransactionForm, UserForm, UserRecordForm
 
 from django.utils import timezone
-import datetime as dt
 
+from decimal import Decimal
+import datetime as dt
 import pdb
 
 """
@@ -214,7 +215,7 @@ def transaction_add(request):
 		transaction.save()
 
 		#update user current funds
-		request.user.userrecord += transaction.value
+		request.user.userrecord.current_funds += Decimal(transaction.value)
 		request.user.save()
 
 		# right now we're all good
@@ -229,6 +230,8 @@ def transaction_add(request):
 			return JsonResponse({
 					'success': True,
 					'message': "Transaction created successfully.",
+					'current_funds': request.user.userrecord.current_funds,
+					'transactionDate': transaction.date,
 					'transactionHtml': transaction_html,
 				})
 		else:
@@ -258,7 +261,8 @@ def transaction_delete(request):
 				# let the ajax method know we succeeded
 				return JsonResponse({
 					'success': True,
-					'message': "Transaction deleted successfully."
+					'message': "Transaction deleted successfully.",
+					'current_funds': request.user.userrecord.current_funds,
 				})
 			else:
 				return JsonResponse({

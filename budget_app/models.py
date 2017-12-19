@@ -25,6 +25,9 @@ class Category(models.Model):
 # Model for transaction log
 class Transaction(models.Model):
 	category = models.ForeignKey(Category, blank=True, null=True, on_delete=models.SET_NULL)
+	# different from date - date is date to be logged under, created_date is timestamp for 
+	# when log was created.
+	created_date = models.DateTimeField(default=timezone.now)
 	date = models.DateTimeField(default=timezone.now)
 	memo = models.CharField(max_length=1000, blank=True, default="")
 	user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)

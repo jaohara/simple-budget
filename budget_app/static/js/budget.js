@@ -237,9 +237,39 @@ $(document).ready(function(){
 				if (DEBUG)
 					console.log(data.success + ": " + data.message);
 
-				var resultRow = $(data.transactionHtml).insertAfter("#transaction-table tr:first");
+				var dateRangeData = $("#date-range").datepicker().data('datepicker');
+
+
+				//make sure it exists within bounds to add
+				if (moment(data.transactionDate).isAfter(dateRangeData.selectedDates[0]) 
+					&& moment(data.transactionDate).isBefore(dateRangeData.selectedDates[1])) {
+					// find spot to add row
+					var rowToAddAfter;
+
+					$($(".transaction-table-row").get().reverse()).each(function(){
+						var rowDate = $(this).find(".transaction-table-row-date").attr("data-date");
+						
+						if (DEBUG){
+							console.log("rowDate: " + rowDate);
+							console.log("data.transactionDate: " + data.transactionDate);
+						}
+						
+						rowToAddAfter = $(this).parent();
+
+						if (DEBUG){
+							console.log("rowDate before?: " + moment(rowDate).isBefore(data.transactionDate));
+							console.log("rowDate after?: " + moment(rowDate).isAfter(data.transactionDate));
+						}
+
+						if (moment(rowDate).isAfter(data.transactionDate))
+							return false;
+					});
+
+					var resultRow = $(data.transactionHtml).insertAfter(rowToAddAfter);
+				}
 				$("#transaction-form").trigger("reset");
 				$("#date-string").datepicker().data('datepicker').selectDate(new Date());
+				$("#money-total").html(data.current_funds);
 
 				redrawCharts();
 			}
@@ -264,6 +294,8 @@ $(document).ready(function(){
 				console.log(data);
 
 				$("#transaction-" + transactionTarget).remove();
+				$("#money-total").html(data.current_funds);
+
 				redrawCharts();
 			}
 		});
