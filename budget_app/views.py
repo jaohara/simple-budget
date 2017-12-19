@@ -41,6 +41,9 @@ def transaction_log(request, sort_order="-date", date_range_start=None, date_ran
 
 	curr_datetime = timezone.localtime(timezone.now())
 
+	if "all_boolean" in request.GET:
+		all_boolean = request.GET["all_boolean"]
+
 	if (bool(all_boolean)):
 		date_range_start = user_joined
 
@@ -79,7 +82,14 @@ def transaction_log(request, sort_order="-date", date_range_start=None, date_ran
 						  date__lte=date_range_end).order_by(sort_order)
 
 	funds_change = sum(transaction.value for transaction in all_transactions) 
-	current_funds = initial_funds + funds_change
+	
+	current_funds_check = initial_funds + funds_change
+
+	if request.user.userrecord.current_funds != current_funds_check:
+		request.user.userrecord.current_funds = current_funds_check
+		request.user.userrecord.save()
+
+
 	daily_change_dict = {date:{"pos":0, "neg":0} for date in dates_in_range}
 
 	category_dict = {"pos":{}, "neg":{}}
@@ -139,8 +149,8 @@ def transaction_log(request, sort_order="-date", date_range_start=None, date_ran
 		to construct date objects. This doesn't account for someone using a european d/m/y format.
 	"""
 
-	render_context = {'current_funds': current_funds,
-				  	  'daily_sums': daily_sums,
+	render_context = {'all_boolean': all_boolean,
+					  'daily_sums': daily_sums,
 				  	  'date_range_start': date_range_start.strftime("%-m/%-d/%y"),
 				  	  'date_range_end': date_range_end.strftime("%-m/%-d/%y"),
 				  	  'date_end_iso': date_range_end.isoformat(),
@@ -203,6 +213,10 @@ def transaction_add(request):
 
 		transaction.save()
 
+		#update user current funds
+		request.user.userrecord += transaction.value
+		request.user.save()
+
 		# right now we're all good
 
 		if request.is_ajax():
@@ -237,6 +251,8 @@ def transaction_delete(request):
 			transaction_to_delete = Transaction.objects.get(pk=request.POST["transaction_pk"])
 
 			if transaction_to_delete.user == request.user:
+				request.user.userrecord.current_funds -= transaction_delete.value
+				request.user.userrecord.save()
 				transaction_to_delete.delete()
 
 				# let the ajax method know we succeeded
@@ -306,7 +322,8 @@ def user_create(request):
 			new_user.save()
 
 			new_user_record = UserRecord(user=new_user,
-										 initial_funds=form.cleaned_data.get('initial_funds'),)
+										 initial_funds=form.cleaned_data.get('initial_funds'),
+										 current_funds=form.cleaned_data.get('initial_funds'),)
 			new_user_record.save()
 
 			login(request, new_user)

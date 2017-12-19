@@ -294,11 +294,20 @@ $(document).ready(function(){
 				$("#transaction-table").remove();
 				$("#table-wrapper").append(load_spinner_html);
 
+				var allBoolean = false;
+				var dateRangeData = $("#date-range").datepicker().data('datepicker');
+
+				// this will never be true as you can't directly compare date objects.
+				// moments.js will allow me to do this.
+				if (date[0] == dateRangeData.minDate && date[1] == dateRangeData.maxDate)
+					allBoolean = true;
+
 				console.log("2 dates selected: " + date);
 				$.ajax({
 					url: "/",
 					type: "GET",
 					data: {
+						all_boolean: allBoolean,
 						date_range_start: date[0].toISOString(),
 						date_range_end: date[1].toISOString()
 					},
@@ -309,6 +318,15 @@ $(document).ready(function(){
 						$("#table-wrapper").append(data.table_html);
 
 						$("#trends-header-range").html($("#date-range").val());
+
+						if (data.all_boolean){
+							console.log("all_boolean is set");
+							if (!$("#data-range-all").hasClass("all-selected"))
+								$("#data-range-all").addClass("all-selected");
+						} else {
+							console.log("all_boolean is not set.");
+							$("#data-range-all").removeClass("all-selected");
+						}
 
 
 						//We're also going to want to redraw the line chart here

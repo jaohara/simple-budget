@@ -60,13 +60,13 @@ class Bill(models.Model):
 		return "Bill '{}' for {}".format(self.name, self.user)
 
 class UserRecord(models.Model):
-	# hold a month of time delta?
+	current_funds = models.DecimalField(default=Decimal(0.0), decimal_places=2, max_digits=64)
 	def_date_range = models.DurationField(default=dt.timedelta(weeks=4))
+	initial_funds = models.DecimalField(default=Decimal(0.0), decimal_places=2, max_digits=64)
 	max_display_categories = models.IntegerField(
 		default=8,
 		validators=[MaxValueValidator(64), MinValueValidator(2)]
 	)
-	initial_funds = models.DecimalField(default=Decimal(0.0), decimal_places=2, max_digits=64)
 	user = models.OneToOneField(get_user_model(), on_delete=models.CASCADE)
 
 	def __str__(self):

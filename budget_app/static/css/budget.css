@@ -101,6 +101,13 @@ input#date-range {
   background-color: rgba(255, 255, 255, 0.1);
   box-shadow: inset 0px 0px 4px rgba(0, 0, 0, 0.1); }
 
+#date-range-all {
+  border-radius: 3px;
+  padding: 2px; }
+  #date-range-all.all-selected {
+    background-color: #007bff;
+    color: #f8f9fa; }
+
 /*	======
 	Footer
 	======	*/

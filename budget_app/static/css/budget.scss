@@ -160,6 +160,16 @@ input#date-range {
 	}
 }
 
+#date-range-all {
+	border-radius: 3px;
+	padding: 2px;
+
+	&.all-selected {
+		background-color: $bs-primary;
+		color: $bs-light;
+	}
+}
+
 
 /*	======
 	Footer

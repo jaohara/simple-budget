@@ -39,14 +39,6 @@
         </div>
 
         <ul class="list-group list-group-flush">
-            <!--
-            <li class="list-group-item">
-                <strong>Total In: </strong></li>
-            <li class="list-group-item"><strong>Total Out: </strong></li>
-            <li class="list-group-item"><strong>Average Daily In: </strong></li>
-            <li class="list-group-item"><strong>Average Daily Out: </strong></li>
-            -->
-
             {% for stat in statistics_list %}
             <li class="list-group-item">
                 <strong>{{stat.name}}</strong>
@@ -66,23 +58,6 @@
     <div class="canvas-wrapper">
         <canvas id="pieChartCanvas" width="600" height="380"></canvas>
     </div>
-
-    <ul>
-        <li>Stat One</li>
-        <li>Stat Two</li>
-        <li>Stat Three</li>
-        <li>Stat Four</li>
-        <li>Stat Five</li>
-    </ul>
-
-    <p>
-        Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-        tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
-        quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-        consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
-        cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
-        proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-    </p>
 {% endblock %}
 
 {% block transaction_container %}
@@ -149,7 +124,13 @@
     data-date-format="mm/dd/yy" data-language="en" data-multiple-dates-separator=" - " data-range="true" 
     value="{{date_range_start}} - {{date_range_end}}">
 
-    <a href="{% url 'transaction_log' all_boolean='all' %}" id="date-range-all" class="">All Time</a>
+    {% if all_boolean %}
+    <a href="{% url 'transaction_log' all_boolean='all' %}" id="date-range-all" class="all-selected">
+    {% else %}
+    <a href="{% url 'transaction_log' all_boolean='all' %}" id="date-range-all">
+    {% endif %}
+        All Transactions
+    </a>
 
     <div id="table-wrapper">
         {% include 'budget_app/transaction_table.html' %}
@@ -175,7 +156,10 @@
         $("#date-range-all").on("click", function(event){
             event.preventDefault();
 
-            var allDateRangeArray = [new Date("{{date_start_bound}}"), new Date("{{date_end_iso}}")]
+            var dateRangeData = $("#date-range").datepicker().data('datepicker');
+
+            //var allDateRangeArray = [new Date("{{date_start_bound}}"), new Date("{{date_end_iso}}")]
+            var allDateRangeArray = [dateRangeData.minDate, dateRangeData.maxDate]
             $("#date-range").datepicker().data('datepicker').selectDate(allDateRangeArray); 
         });
     });

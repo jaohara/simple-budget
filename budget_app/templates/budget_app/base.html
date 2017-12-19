@@ -23,6 +23,9 @@
         <!-- air-datepicker js-->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/air-datepicker/2.2.3/js/datepicker.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/air-datepicker/2.2.3/js/i18n/datepicker.en.min.js"></script>
+
+        <!-- moments.js -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.20.1/moment-with-locales.min.js"></script>
     </head>
     <body>
 
@@ -34,12 +37,12 @@
                 </a>
 
                 {% if user.is_authenticated %}
-                    {% if current_funds < 0 %}
+                    {% if user.userrecord.current_funds < 0 %}
                     <span class="btn btn-danger">
                     {% else %}
                     <span class="btn btn-success">
                     {% endif %}
-                        $<span id="money-total">{{current_funds}}</span>
+                        $<span id="money-total">{{user.userrecord.current_funds}}</span>
                     </span>
                 {% endif %}
             </span>
