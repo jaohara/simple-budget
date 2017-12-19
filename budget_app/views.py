@@ -41,7 +41,7 @@ def transaction_log(request, sort_order="-date", date_range_start=None, date_ran
 
 	curr_datetime = timezone.localtime(timezone.now())
 
-	if "all_boolean" in request.GET:
+	if "all_boolean" in request.GET and request.GET["all_boolean"] != 'false':
 		all_boolean = request.GET["all_boolean"]
 
 	if (bool(all_boolean)):
@@ -251,7 +251,7 @@ def transaction_delete(request):
 			transaction_to_delete = Transaction.objects.get(pk=request.POST["transaction_pk"])
 
 			if transaction_to_delete.user == request.user:
-				request.user.userrecord.current_funds -= transaction_delete.value
+				request.user.userrecord.current_funds -= transaction_to_delete.value
 				request.user.userrecord.save()
 				transaction_to_delete.delete()
 

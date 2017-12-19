@@ -248,6 +248,8 @@ $(document).ready(function(){
 
 	//handler for delete buttons
 	$(".transaction-delete-button").on("click", function(event){
+		console.log("Click event registered on .transaction-delete-button.");
+
 		event.preventDefault();
 		var transactionTarget = $(this).attr("delete-target");
 
@@ -266,7 +268,6 @@ $(document).ready(function(){
 			}
 		});
 	});
-
 
 	// test handler for actions on datepicker
 	/*
@@ -290,7 +291,7 @@ $(document).ready(function(){
 	$("#date-range").datepicker({
 		maxDate: new Date(),
 		onSelect: function(formattedDate, date, inst) {
-			if (date.length > 1){
+			if (date.length > 1 && inst._prevOnSelectValue != formattedDate){
 				$("#transaction-table").remove();
 				$("#table-wrapper").append(load_spinner_html);
 
