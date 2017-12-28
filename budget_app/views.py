@@ -16,6 +16,7 @@ from decimal import Decimal
 import datetime as dt
 import pdb
 
+
 """
 	=========================
 	TRANSACTION RELATED VIEWS
@@ -65,7 +66,6 @@ def transaction_log(request, sort_order="-date", date_range_start=None, date_ran
 							  		   else curr_datetime - date_range
 	date_range_end = curr_datetime if date_range_end is None else date_range_end
 
-
 	# date_range_start and date_range_end need to equal their .date() values by now
 	applied_date_range = date_range_end.date() - date_range_start.date()
 
@@ -90,25 +90,17 @@ def transaction_log(request, sort_order="-date", date_range_start=None, date_ran
 		request.user.userrecord.current_funds = current_funds_check
 		request.user.userrecord.save()
 
-
 	daily_change_dict = {date:{"pos":0, "neg":0} for date in dates_in_range}
 
 	category_dict = {"pos":{}, "neg":{}}
 
-	statistics_list = []
-
 	for transaction in range_transactions:
 		sign = "pos" if transaction.value > 0 else "neg"
-		#category = transaction.category.name if transaction.category.name is not "" \
-		#	and transaction.category is not None else "Uncategorized"
+
 		category = "Uncategorized" if transaction.category is None or transaction.category.name is "" \
 			else transaction.category.name
 		date = timezone.localtime(transaction.date).strftime("%-m/%-d")
 
-		#pdb.set_trace()
-
-		# daily_change_dict = {"xx/yy":{"pos":0, "neg":0}...}
-		# category_dict = {"pos":{}, "neg":{}}
 		daily_change_dict[date][sign] += transaction.value
 
 		if category in category_dict[sign].keys():
@@ -132,6 +124,7 @@ def transaction_log(request, sort_order="-date", date_range_start=None, date_ran
 	# is there a prettier way to do this? Maybe make a method?
 	# Also those names are gross
 	# Currency formatting also isn't determined by locale but hardcoded to USD
+	statistics_list = []
 	statistics_list.append({"name": "Cumulative Daily In Over Range: ", 
 							"value": "${:,.2f}".format(sum(conv_pos_change))})
 	statistics_list.append({"name": "Cumulative Daily Out Over Range: ", 
