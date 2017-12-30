@@ -1,5 +1,4 @@
 # simple-budget
-----
 
 [Live Version](http://budget.johnaohara.com)
 
