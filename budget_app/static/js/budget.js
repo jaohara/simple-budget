@@ -149,8 +149,6 @@ $(document).ready(function(){
             url: "/",
             type: "GET",
             success: function(data){
-                console.log("Everything's working fine");
-
                 console.log(data);
 
                 // destroy and redraw the charts
@@ -244,7 +242,7 @@ $(document).ready(function(){
 				if (moment(data.transactionDate).isAfter(dateRangeData.selectedDates[0]) 
 					&& moment(data.transactionDate).isBefore(dateRangeData.selectedDates[1])) {
 					// find spot to add row
-					var rowToAddAfter;
+					var adjacentRow;
 
 					$($(".transaction-table-row").get().reverse()).each(function(){
 						var rowDate = $(this).find(".transaction-table-row-date").attr("data-date");
@@ -254,19 +252,24 @@ $(document).ready(function(){
 							console.log("data.transactionDate: " + data.transactionDate);
 						}
 						
-						rowToAddAfter = $(this).parent();
+						adjacentRow = $(this);
 
 						if (DEBUG){
 							console.log("rowDate before?: " + moment(rowDate).isBefore(data.transactionDate));
 							console.log("rowDate after?: " + moment(rowDate).isAfter(data.transactionDate));
+							console.log("rowDate same date?: " + moment(rowDate).isSame(data.transactionDate, 'day'));
 						}
 
 						if (moment(rowDate).isAfter(data.transactionDate))
 							return false;
 					});
 
-					var resultRow = $(data.transactionHtml).insertAfter(rowToAddAfter);
+					if (moment($(adjacentRow).find(".transaction-table-row-date").attr("data-date")).isSame(data.transactionDate, 'day'))
+						var resultRow = $(data.transactionHtml).insertBefore(adjacentRow);
+					else
+						var resultRow = $(data.transactionHtml).insertAfter(adjacentRow);
 				}
+
 				$("#transaction-form").trigger("reset");
 				$("#date-string").datepicker().data('datepicker').selectDate(new Date());
 				$("#money-total").html(data.current_funds);
