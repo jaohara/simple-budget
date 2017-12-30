@@ -326,7 +326,30 @@ $(document).ready(function(){
 	$("#date-range").datepicker({
 		maxDate: new Date(),
 		onSelect: function(formattedDate, date, inst) {
-			if (date.length > 1 && inst._prevOnSelectValue != formattedDate){
+			if (DEBUG){
+					console.log("onSelect registered on #date-range");
+					console.log("date.length: " + date.length);
+					console.log("inst._prevOnSelectValue: " + inst._prevOnSelectValue);
+					console.log("formattedDate: " + formattedDate);
+			}
+
+			if (date.length > 1){
+			/*
+				below was previous code that worked, the second part of the logic check makes sure 
+				the currently selected date isn't the same as the previous one, preventing a double
+				load when the page loads and datepicker values are manually selected.
+
+				Now it's not working. inst._prevOnSelectValue is always equal to formattedDate.
+
+				Why is this?
+
+				Actually, did this ever work? the idea is sound but I'm not sure if the implementation
+				works.
+
+			*/
+			//if (date.length > 1 && inst._prevOnSelectValue != formattedDate){
+
+
 				$("#transaction-table").remove();
 				$("#table-wrapper").append(load_spinner_html);
 

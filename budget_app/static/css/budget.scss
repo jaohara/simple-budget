@@ -116,10 +116,14 @@ div.canvas-wrapper {
 }
 
 input#date-range {
-	border: 0px;
+	border: 1px solid #ced4da;
+	// i think this is the default bootstrap 4 border radius?
+	border-radius: .25rem;
+	color: $bs-dark;
 	font-weight: bold;
+	margin: 1em;
 	padding: 10px;
-	width: 10.5em;
+	width: 11em;
 
 	&:hover {
 		color: $bs-primary;

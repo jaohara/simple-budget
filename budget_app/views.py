@@ -145,8 +145,8 @@ def transaction_log(request, sort_order="-date", date_range_start=None, date_ran
 
 	render_context = {'all_boolean': all_boolean,
 					  'daily_sums': daily_sums,
-				  	  'date_range_start': date_range_start.strftime("%-m/%-d/%y"),
-				  	  'date_range_end': date_range_end.strftime("%-m/%-d/%y"),
+				  	  'date_range_start': date_range_start.strftime("%-m/%d/%y"),
+				  	  'date_range_end': date_range_end.strftime("%-m/%d/%y"),
 				  	  'date_end_iso': date_range_end.isoformat(),
 				  	  'date_start_bound': user_joined.isoformat(),
 				  	  'date_start_iso': date_range_start.isoformat(),
