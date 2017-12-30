@@ -78,20 +78,6 @@ function drawLinechart(startingMoney, dailyIn, dailyOut, labelsArray, context){
     });
 }
 
-
-
-/*
-    TODO: There's a weird thing happening how where the labels aren't lining up. When
-    you hover over sections of the pie chart they reveal the label for one of the adjacent
-    slices but not the one you're hovering over - does it have something to do with using
-    the response: true option?
-
-    Figure out a color scheme to use and implement these.
-
-	What happens when there are less than 8 categories?
-*/
-
-
 function drawPieChart(labelsArray, valuesArray, context){
     var pieChartData = {
         labels: labelsArray,
@@ -145,25 +131,66 @@ $(document).ready(function(){
 	});
 
 	function redrawCharts(){
+		var dateRangeData = $("#date-range").datepicker().data('datepicker');
+
 		$.ajax({
             url: "/",
+            data: {
+            	date_range_start: dateRangeData.minRange.toISOString(),
+            	date_range_end: dateRangeData.maxRange.toISOString(),
+            },
             type: "GET",
             success: function(data){
-                console.log(data);
+            	if (DEBUG)
+                	console.log(data);
 
                 // destroy and redraw the charts
                 lineChart.destroy();
                 pieChart.destroy();
                 
-                lineChart = drawLinechart(data.initial_funds, data.pos_change_vals, data.neg_change_vals,
+                lineChart = drawLinechart(data.range_start_funds, data.pos_change_vals, data.neg_change_vals,
                     data.dates_in_range, $("#lineChartCanvas"));
                 pieChart = drawPieChart(data.sorted_expense_cat, data.sorted_expense_val, 
                     $("#pieChartCanvas"));
 
-                $("#money-total").html(data.current_funds)
+                // fill new stat values
+                for (var i = 0; i < data.statistics_list.length; i++)
+                	$("#stat-" + data.statistics_list[i].id).html(data.statistics_list[i].value);
+
+                $("#money-total").html(data.current_funds);
             },
         });
 	}
+
+	//handler for delete buttons
+	function bindDeleteButtonEvents(){
+		console.log("calling bindDeleteButtonEvents()...");
+
+		$(".transaction-delete-button").on("click", function(event){
+			event.preventDefault();
+
+			var transactionTarget = $(this).attr("delete-target");
+
+			if (DEBUG)
+				console.log("Deleting transaction " + transactionTarget + "...");
+
+			$.ajax({
+				url: "/transaction/delete",
+				data: {"transaction_pk": transactionTarget},
+				type: "POST",
+				success: function(data){
+					console.log(data);
+
+					$("#transaction-" + transactionTarget).remove();
+					$("#money-total").html(data.current_funds);
+
+					redrawCharts();
+				}
+			});
+		});
+	}
+
+	bindDeleteButtonEvents();
 
 	$("a.section-toggle-link").on("click", function(event){
 		event.preventDefault();
@@ -275,34 +302,11 @@ $(document).ready(function(){
 				$("#money-total").html(data.current_funds);
 
 				redrawCharts();
+				bindDeleteButtonEvents();
 			}
 		});
 	});
 
-	//handler for delete buttons
-	$(".transaction-delete-button").on("click", function(event){
-		console.log("Click event registered on .transaction-delete-button.");
-
-		event.preventDefault();
-		var transactionTarget = $(this).attr("delete-target");
-
-		if (DEBUG)
-			console.log("Deleting transaction " + transactionTarget + "...");
-
-		$.ajax({
-			url: "/transaction/delete",
-			data: {"transaction_pk": transactionTarget},
-			type: "POST",
-			success: function(data){
-				console.log(data);
-
-				$("#transaction-" + transactionTarget).remove();
-				$("#money-total").html(data.current_funds);
-
-				redrawCharts();
-			}
-		});
-	});
 
 	// test handler for actions on datepicker
 	/*
@@ -376,7 +380,7 @@ $(document).ready(function(){
 						$("#load-spinner").remove();
 						$("#table-wrapper").append(data.table_html);
 
-						$("#trends-header-range").html($("#date-range").val());
+						$(".trends-header-range").html($("#date-range").val());
 
 						if (data.all_boolean){
 							console.log("all_boolean is set");
@@ -387,8 +391,8 @@ $(document).ready(function(){
 							$("#data-range-all").removeClass("all-selected");
 						}
 
-
-						//We're also going to want to redraw the line chart here
+						redrawCharts()
+						bindDeleteButtonEvents();
 					}
 				});
 			}

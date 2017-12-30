@@ -36,6 +36,22 @@ def transaction_log(request, sort_order="-date", date_range_start=None, date_ran
 	# this is a bit wonky - I need the beginning of the day for the timezone-aware version of the date
 	# when the user joined. This seems like the best way to make this happen. 
 	user_joined = timezone.localtime(request.user.date_joined).replace(hour=0, minute=0, second=0, microsecond=0)
+
+
+	"""
+		Here's another issue that I need to flesh out - the original design for this was poor, and now I'm running 
+		into problems with the graphs for ranges of time that aren't the entire span of the user's lifetime.
+
+		The offsets for each day are being calculated based on the initial funds, so they're inaccurate when
+		the funds at the start of the range aren't equal to the intial funds. This is the case for pretty
+		much any day besides the first day that the user registered.
+
+		What's the solution to this? Maybe I should always grab the entire set of transacions so all of the 
+		calculations are accurate and simply slice out the proper range. This will be accurate but inefficient.
+
+		I could also work backwards from current funds, but this will create the same problem in the reverse
+		order. Funds will be inaccurate if current_funds on the last day selected doesn't equal the most current
+	"""
 	initial_funds = request.user.userrecord.initial_funds
 	
 	form = TransactionForm()
@@ -80,9 +96,13 @@ def transaction_log(request, sort_order="-date", date_range_start=None, date_ran
 
 	all_transactions = Transaction.objects.filter(user__pk=request.user.pk)
 	range_transactions = all_transactions.filter(date__gte=date_range_start.date(), 
-						  date__lte=date_range_end).order_by(sort_order)
+						  date__lte=date_range_end).order_by(sort_order, "-created_date")
 
-	funds_change = sum(transaction.value for transaction in all_transactions) 
+	funds_change = sum(transaction.value for transaction in all_transactions)
+
+	# this is used for the charts so they have an accurate starting point for the collection of offsets
+	range_start_funds = initial_funds + sum(transaction.value for \
+						transaction in all_transactions.filter(date__lt=date_range_start.date()))
 	
 	current_funds_check = initial_funds + funds_change
 
@@ -125,13 +145,17 @@ def transaction_log(request, sort_order="-date", date_range_start=None, date_ran
 	# Also those names are gross
 	# Currency formatting also isn't determined by locale but hardcoded to USD
 	statistics_list = []
-	statistics_list.append({"name": "Cumulative Daily In Over Range: ", 
+	statistics_list.append({"name": "Cumulative Daily In: ",
+							"id": "cumulative-daily-in",
 							"value": "${:,.2f}".format(sum(conv_pos_change))})
-	statistics_list.append({"name": "Cumulative Daily Out Over Range: ", 
+	statistics_list.append({"name": "Cumulative Daily Out: ",
+							"id": "cumulative-daily-out", 
 							"value": "${:,.2f}".format(sum(conv_neg_change))})
-	statistics_list.append({"name": "Average Daily In Over Range: ", 
+	statistics_list.append({"name": "Average Daily In: ",
+							"id": "avg-daily-in", 
 							"value": "${:,.2f}".format(sum(conv_pos_change)/len(conv_pos_change))})
-	statistics_list.append({"name": "Average Daily Out Over Range: ", 
+	statistics_list.append({"name": "Average Daily Out: ",
+							"id": "avg-daily-out", 
 							"value": "${:,.2f}".format(sum(conv_neg_change)/len(conv_neg_change))})
 
 
@@ -143,7 +167,8 @@ def transaction_log(request, sort_order="-date", date_range_start=None, date_ran
 		to construct date objects. This doesn't account for someone using a european d/m/y format.
 	"""
 
-	render_context = {'all_boolean': all_boolean,
+	render_context = {
+					  'all_boolean': all_boolean,
 					  'daily_sums': daily_sums,
 				  	  'date_range_start': date_range_start.strftime("%-m/%d/%y"),
 				  	  'date_range_end': date_range_end.strftime("%-m/%d/%y"),
@@ -152,9 +177,9 @@ def transaction_log(request, sort_order="-date", date_range_start=None, date_ran
 				  	  'date_start_iso': date_range_start.isoformat(),
 					  'dates_in_range': dates_in_range,
 					  'funds_change': funds_change,
-					  'initial_funds': initial_funds,
 				  	  'neg_change_vals': conv_neg_change,
 				  	  'pos_change_vals': conv_pos_change,
+				  	  'range_start_funds': range_start_funds,
 					  'sorted_expense_cat': sorted_expense_cat[:max_display_categories],
 					  'sorted_expense_val': sorted_expense_val[:max_display_categories],
 					  'sorted_income_cat': sorted_income_cat[:max_display_categories],

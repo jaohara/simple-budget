@@ -25,7 +25,7 @@
 {% block trends %}
     <h4>
         Money Over Time: 
-        <span id="trends-header-range">{{date_range_start}} - {{date_range_end}}</span>
+        <span class="trends-header-range">{{date_range_start}} - {{date_range_end}}</span>
     </h4>
     
     <div class="canvas-wrapper">
@@ -33,16 +33,17 @@
     </div>
 
     {% if statistics_list %}
-    <div id="trends-stats" class="card  card-sm">
+    <div id="trends-stats" class="card card-sm">
         <div class="card-header bg-dark text-light">
-            Statistics
+            Statistics over
+            <span class="trends-header-range">{{date_range_start}} - {{date_range_end}}</span>
         </div>
 
         <ul class="list-group list-group-flush">
             {% for stat in statistics_list %}
             <li class="list-group-item">
                 <strong>{{stat.name}}</strong>
-                <span class="statistic_value">
+                <span class="statistic_value" id="stat-{{stat.id}}">
                     {{stat.value}}
                 </span>
             </li>
@@ -141,7 +142,7 @@
 <script>
     $(document).ready(function(){
 
-        lineChart = drawLinechart({{initial_funds}}, {{pos_change_vals}}, {{neg_change_vals}}, 
+        lineChart = drawLinechart({{range_start_funds}}, {{pos_change_vals}}, {{neg_change_vals}}, 
             {{dates_in_range|safe}}, $("#lineChartCanvas"));
         pieChart = drawPieChart({{sorted_expense_cat|safe}}, {{sorted_expense_val}}, $("pieChartCanvas"));
 
