@@ -1,13 +1,6 @@
 {% extends 'budget_app/base.html' %}
 
 {% load staticfiles %}
-
-{% block login_info %}
-    {% if user.is_authenticated %}
-        Logged in as {{ username }}.
-    {% endif %}
-{% endblock %}
-
     <!--
         Junk here, but I used these colors:
     
@@ -22,7 +15,7 @@
           ],
     -->
 
-{% block trends %}
+{% block charts %}
     <h4>
         Money Over Time: 
         <span class="trends-header-range">{{date_range_start}} - {{date_range_end}}</span>
@@ -53,15 +46,7 @@
     {% endif %}
 {% endblock %}
 
-{% block categories %}
-    <h1>Most Common Expenses</h1>
-
-    <div class="canvas-wrapper">
-        <canvas id="pieChartCanvas" width="600" height="380"></canvas>
-    </div>
-{% endblock %}
-
-{% block transaction_container %}
+{% block transaction_jumbotron %}
     <form method="POST" action="{% url 'transaction_add' %}" id="transaction-form">
         {% csrf_token %}
         {# transaction_form.as_p #}
@@ -83,7 +68,7 @@
                         {% if field.label == "Value" %}
                         <span class="icon ion-social-usd">
                         {% elif field.label == "Memo"%}
-                        <span class="icon ion-ios-bookmarks">
+                        <span class="icon ion-document-text">
                         {% endif %}
                         </span>
                     </span>
@@ -94,7 +79,7 @@
         <div class="form-group">
             <div class="input-group">
                 <span class="input-group-addon">
-                    <span class="icon ion-filing"></span>
+                    <span class="icon ion-folder"></span>
                 </span>
                 <input class="form-control" type="text" name="category_string" id="category-string" placeholder="Category">
             </div>
@@ -103,7 +88,7 @@
         <div class="form-group">
             <div class="input-group">
                 <span class="input-group-addon">
-                    <span class="icon ion-ios-calendar-outline"></span>
+                    <span class="icon ion-calendar"></span>
                 </span>
                 <input class="form-control" type="text" name="date_string" id="date-string"
                 data-date-format="mm/dd/yy" data-language="en">
@@ -117,13 +102,16 @@
 {% endblock %}
 
 
+{% block content_header %}Transactions{% endblock %}
+
 {% block content %}
-    <h2>Transactions</h2>
 
     <label for="date-range">Date Range: </label>
+    <!--
     <input type="text" readonly id="date-range" 
     data-date-format="mm/dd/yy" data-language="en" data-multiple-dates-separator=" - " data-range="true" 
     value="{{date_range_start}} - {{date_range_end}}">
+    -->
 
     {% if all_boolean %}
     <a href="{% url 'transaction_log' all_boolean='all' %}" id="date-range-all" class="all-selected">
@@ -136,33 +124,4 @@
     <div id="table-wrapper">
         {% include 'budget_app/transaction_table.html' %}
     </div>
-{% endblock %}
-
-{% block extra_js %}
-<script>
-    $(document).ready(function(){
-
-        lineChart = drawLinechart({{range_start_funds}}, {{pos_change_vals}}, {{neg_change_vals}}, 
-            {{dates_in_range|safe}}, $("#lineChartCanvas"));
-        pieChart = drawPieChart({{sorted_expense_cat|safe}}, {{sorted_expense_val}}, $("pieChartCanvas"));
-
-        var dateRangeArray = [new Date("{{date_start_iso}}"), new Date("{{date_end_iso}}")];
-        $("#date-range").datepicker().data('datepicker').selectDate(dateRangeArray);
-        $("#date-range").datepicker().data('datepicker').update('minDate', new Date("{{date_start_bound}}"));
-
-        $("#date-string").datepicker().data('datepicker').selectDate(new Date());
-        $("#date-string").datepicker().data('datepicker').update('minDate', new Date("{{date_start_bound}}"));
-
-        //If JS is enabled, make sure the "All Time" link makes an ajax request
-        $("#date-range-all").on("click", function(event){
-            event.preventDefault();
-
-            var dateRangeData = $("#date-range").datepicker().data('datepicker');
-
-            //var allDateRangeArray = [new Date("{{date_start_bound}}"), new Date("{{date_end_iso}}")]
-            var allDateRangeArray = [dateRangeData.minDate, dateRangeData.maxDate]
-            $("#date-range").datepicker().data('datepicker').selectDate(allDateRangeArray); 
-        });
-    });
-</script>
 {% endblock %}

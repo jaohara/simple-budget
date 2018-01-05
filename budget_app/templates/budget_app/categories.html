@@ -1,0 +1,28 @@
+{% extends 'budget_app/base.html' %}
+
+{% load staticfiles %}
+
+<!--
+	I need to make this a generic "charts" block for either the transactions or the categories 
+	charts. Whichever one is displayed will depend on what page you're viewing.	
+-->
+
+{# block charts #}
+
+{# endblock #}
+
+{% block charts %}
+    <h1>Most Common Expenses</h1>
+
+    <div class="canvas-wrapper">
+        <canvas id="pieChartCanvas" width="600" height="380"></canvas>
+    </div>
+{% endblock %}
+
+{% block content_header %}Categories{% endblock%}
+
+{% block content %}
+{% endblock %}
+
+
+

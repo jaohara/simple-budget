@@ -12,6 +12,9 @@
         <link rel="stylesheet" href="http://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
         <!-- air-datepicker css -->
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/air-datepicker/2.2.3/css/datepicker.min.css">
+
+        <!-- Roboto Condensed for Logo -->
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto+Condensed:400i,700i">
         
         <link rel="stylesheet" href="{% static 'css/budget.css' %}">
 
@@ -33,36 +36,70 @@
 
             <span class="navbar-brand">
                 <a class="link-unstyled" href="/">
-                    <span class="icon ion-cash"></span> Simple Budget
-                </a>
-
                 {% if user.is_authenticated %}
+
                     {% if user.userrecord.current_funds < 0 %}
                     <span class="btn btn-danger">
                     {% else %}
                     <span class="btn btn-success">
+                        <span class="icon ion-cash"></span>
                     {% endif %}
                         $<span id="money-total">{{user.userrecord.current_funds}}</span>
                     </span>
                 {% endif %}
+                </a>
+
             </span>
 
             <div class="collapse navbar-collapse" id="navbar-content">
 
-                <ul class="navbar-nav">
                 {% if user.is_authenticated %}
+                <ul class="navbar-nav">
+
+                    <li class="nav-item btn-group app-toolbar">
+                        <span class="section-toggle-link btn btn-primary" id="global-new-transaction">
+                            <span class="ion-icon ion-plus-round"></span>
+                        </span>
+
+                        <span class="section-toggle-link btn btn-primary" id="global-calendar">
+                            <span class="ion-icon ion-calendar"></span>
+
+                            <div id="global-calendar-container">
+                                <!--<span
+                                 class="datepicker-here"
+                                 data-date-format="mm/dd/yy" data-language="en">-->
+
+                                <!-- copied verbatim from #date-range for the moment --> 
+                                <!--<span id="global-calendar-contents" -->
+                                <span id="date-range"
+                                    data-date-format="mm/dd/yy" data-language="en"  
+                                    data-multiple-dates-separator=" - " data-range="true" 
+                                    value="{{date_range_start}} - {{date_range_end}}">
+                                </span>
+                            </div>
+                        </span>
+
+                        <span class="section-toggle-link btn btn-primary" id="global-chart-toggle">
+                            <span class="ion-icon ion-stats-bars"></span>
+                        </span>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'transaction_log' %}">
+                            <span class="ion-icon ion-social-usd"></span> Transactions
+                        </a> 
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'category_display' %}">
+                            <span class="ion-icon ion-folder"></span> Categories
+                        </a>
+                    </li>
 
                     <!--
                     <li class="nav-item">
-                        <span class="btn btn-success">
-                            $<span id="money-total">{{current_funds}}</span>
-                        </span>
-                    </li>
-                    -->
-                    
-                    <li class="nav-item">
                         <a class="nav-link section-toggle-link" href="" toggle-target="trends-jumbotron">
-                            Trends <!---<span class="ion-icon ion-ios-pie-outline"></span>-->
+                            Trends
                         </a>
                     </li>
 
@@ -71,8 +108,9 @@
                             Categories
                         </a>
                     </li>
-                {% endif %}
+                    -->
                 </ul>
+                {% endif %}
 
                 <ul class="navbar-nav ml-auto">
                 {% if user.is_authenticated %}
@@ -109,7 +147,7 @@
             </button>
         </nav>
 
-
+        <!--
         <div class="jumbotron trends-container" id="trends-jumbotron">
             {% block trends %}
             {% endblock %}
@@ -119,13 +157,25 @@
             {% block categories %}
             {% endblock %}
         </div>
+        -->
 
-        <div class="container" id="transaction-container">
-            {% block transaction_container %}
+        <!-- above are now combined into a generic "charts" container that will be dynamically
+            populated based on the view -->
+
+        <div class="jumbotron charts-container" id="charts-jumbotron">
+            {% block charts %}
             {% endblock %}
         </div>
 
+        <div class="jumbotron transaction-add-container" id="transaction-jumbotron">
+            <div class="container">
+            {% block transaction_jumbotron %}
+            {% endblock %}
+            </div>
+        </div>
+
         <div class="container main-content" id="main-content">
+            <h2>{% block content_header %}{% endblock %}</h2>
             {% block content %}
             {% endblock %}
         </div>
@@ -151,6 +201,31 @@
 
         <script>
             var load_spinner_html = `{% include "budget_app/transaction_table_loader.html" %}`;
+
+            $(document).ready(function(){
+
+                lineChart = drawLinechart({{range_start_funds}}, {{pos_change_vals}}, {{neg_change_vals}}, 
+                    {{dates_in_range|safe}}, $("#lineChartCanvas"));
+                pieChart = drawPieChart({{sorted_expense_cat|safe}}, {{sorted_expense_val}}, $("pieChartCanvas"));
+
+                var dateRangeArray = [new Date("{{date_start_iso}}"), new Date("{{date_end_iso}}")];
+                $("#date-range").datepicker().data('datepicker').selectDate(dateRangeArray);
+                $("#date-range").datepicker().data('datepicker').update('minDate', new Date("{{date_start_bound}}"));
+
+                $("#date-string").datepicker().data('datepicker').selectDate(new Date());
+                $("#date-string").datepicker().data('datepicker').update('minDate', new Date("{{date_start_bound}}"));
+
+                //If JS is enabled, make sure the "All Time" link makes an ajax request
+                $("#date-range-all").on("click", function(event){
+                    event.preventDefault();
+
+                    var dateRangeData = $("#date-range").datepicker().data('datepicker');
+
+                    //var allDateRangeArray = [new Date("{{date_start_bound}}"), new Date("{{date_end_iso}}")]
+                    var allDateRangeArray = [dateRangeData.minDate, dateRangeData.maxDate]
+                    $("#date-range").datepicker().data('datepicker').selectDate(allDateRangeArray); 
+                });
+            });
         </script>
 
         <script src="{% static 'js/budget.js'%}"></script>

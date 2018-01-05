@@ -320,12 +320,23 @@ def transaction_form_debug(request):
 	======================
 """
 
-# returns categories similar to the query, used to populate auto-complete list
-# below category input field
+@login_required
 def category_display(request, date_range_start=None, date_range_end=None):
 
+	"""
+		This is going to have to reuse a lot of the same code from the transactions - 
+		how I grab the range of dates and how I sum up the income and expense totals
+		for each of the categories. 
 
-	return redirect("/")
+		Right off the bat we're going to need to rethink some stuff there.
+
+		Should I put these common tasks in a separate utils.py file, or should
+		I make a generic view that these both inherit from?
+	"""
+
+
+
+	return render(request, 'budget_app/categories.html', {})
 
 """
 	==================
@@ -356,3 +367,7 @@ def user_create(request):
 		form = UserRecordForm()
 
 	return render(request, 'registration/user_create.html', {'form': form})
+
+@login_required
+def user_settings(request):
+	return redirect("/")

@@ -15,6 +15,9 @@ $bs-info: #17a2b8;
 $bs-light: #f8f9fa;
 $bs-dark: #343a40;
 
+// used for navbar and icons in input-group-addon
+$common-text-shadow: 0px 1px 1px rgba(0,0,0,0.3);
+
 
 /*	=====
 	Debug
@@ -28,12 +31,30 @@ $bs-dark: #343a40;
 	Navbar
 	======	*/
 
+.simple-budget-logo {
+}
 
-.navbar{
-
-
+.app-toolbar span.btn{
 
 }
+
+
+.navbar{
+	text-shadow: $common-text-shadow;
+}
+
+
+a.calendar-trigger{
+	color: $bs-light;
+}
+
+#global-calendar-container{
+	display: none;
+	position: fixed;
+	z-index: 12;
+
+}
+
 
 
 /*	====
@@ -78,7 +99,9 @@ a{
 	Jumbotrons
 	==========	*/
 
-#categories-jumbotron, #trends-jumbotron {
+// below selector is from older template 
+// #categories-jumbotron, #trends-jumbotron
+#charts-jumbotron {
 	display: none;
 }
 
@@ -86,6 +109,14 @@ a{
 div.canvas-wrapper {
 	margin: 2em auto;
 	width: 95% !important;
+}
+
+/*	=====================
+	Transaction Container
+	=====================	*/
+
+#transaction-jumbotron{
+	display: none;
 }
 
 /* 	==========
@@ -113,6 +144,7 @@ div.canvas-wrapper {
 .input-group-addon {
 	/* How do I center the span.input-group-addon span.icon elements? */
 	/*min-width: 6em;*/
+	text-shadow: $common-text-shadow;
 }
 
 input#date-range {

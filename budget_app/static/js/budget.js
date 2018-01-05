@@ -1,24 +1,13 @@
-/*
-	Alright, we're almost there. The only thing that's wrong now is that the variables
-	"lineChart" and "pieChart" don't exist in the scope of the ajax method at the bottom of
-	the page. what would be a solution?
-
-	What happens if I define them here as globals, and then simply assign a value to them
-	in the main script? would that work?
-
-
-	IT DID IT! HELL YEAH IT DID IT, FUCK MOTHERFUCKING YEAH! WOOO, THIS IS AWESOME!
-
-*/
-
 var lineChart;
 var pieChart;
-
 
 var lineChartContext = $("#lineChartCanvas");
 var pieChartContext = $("#pieChartCanvas");
 
-// ow do I guarantee that the length of the date range, the dailyIn array,
+var gl_animSpeed = 200;
+
+
+// how do I guarantee that the length of the date range, the dailyIn array,
 // and the dailyOut array 
 function calculateDailyChange(start, posChange, negChange){
     let sumArray = [];
@@ -191,6 +180,63 @@ $(document).ready(function(){
 	}
 
 	bindDeleteButtonEvents();
+
+	// event listeners for toolbar
+
+	// add transaction
+	$("#global-new-transaction").on("click", function(event){
+		event.preventDefault();
+		$("#transaction-jumbotron").slideToggle(gl_animSpeed);
+	});
+
+	// datepicker
+	$("#global-calendar").on("click", function(event){
+		event.preventDefault();
+
+
+		/*
+			===================
+			RESUME WORKING HERE
+			===================
+
+			Alright, we're trying to make the calendar not hide when we click on it. Being a child
+			of #global-calendar, any click on the calendar object itself will register with the
+			parent's event listener.
+
+			I've figured out how to ignore clicks on the calendar's body - we just use $.contains() 
+			to check if the click is registered on a child of #global-calendar-container, which 
+			means that we're clicking on somewhere in the calendar. This will return False and 
+			prevent the container from toggling out.
+
+			The problem I'm running into is that clicks on the calendar links aren't being recognized
+			as children via this method. I need to look into why that's the case and figure out how
+			to get around it.
+
+			All of the calls to console.log() below are to try to diagnose this issue.
+	
+
+		*/
+
+
+
+
+		// we use .get(0) here to grab the DOM element from the jQuery object, which $.contains() requires.
+		console.log($.contains($("#global-calendar-container").get(0), $(event.target).get(0)));
+
+		console.log($("#global-calendar-container"));
+		console.log($(event.target));
+
+		if ($.contains($("#global-calendar-container").get(0), $(event.target).get(0)))
+			return false;
+
+		$("#global-calendar-container").fadeToggle(gl_animSpeed);
+	});
+
+	// toggle page charts
+	$("#global-chart-toggle").on("click", function(event){
+		event.preventDefault();
+		$("#charts-jumbotron").slideToggle(gl_animSpeed);
+	});
 
 	$("a.section-toggle-link").on("click", function(event){
 		event.preventDefault();
@@ -393,6 +439,11 @@ $(document).ready(function(){
 
 						redrawCharts()
 						bindDeleteButtonEvents();
+
+						//hide the global calendar
+						// note that this should be fadeOut rather than toggle, or else triggered selection
+						// events on this datepicker will cause the chart to appear (opposite of desired functionality)
+						$("#global-calendar-container").fadeOut("fast");
 					}
 				});
 			}
