@@ -199,43 +199,15 @@ $(document).ready(function(){
 	$("#global-calendar").on("click", function(event){
 		event.preventDefault();
 
-
 		/*
-			===================
-			RESUME WORKING HERE
-			===================
-
-			Alright, we're trying to make the calendar not hide when we click on it. Being a child
-			of #global-calendar, any click on the calendar object itself will register with the
-			parent's event listener.
-
-			I've figured out how to ignore clicks on the calendar's body - we just use $.contains() 
-			to check if the click is registered on a child of #global-calendar-container, which 
-			means that we're clicking on somewhere in the calendar. This will return False and 
-			prevent the container from toggling out.
-
-			The problem I'm running into is that clicks on the calendar links aren't being recognized
-			as children via this method. I need to look into why that's the case and figure out how
-			to get around it.
-
-			All of the calls to console.log() below are to try to diagnose this issue.
-	
-
+			I think I finally wrapped up this nonsense. Rather than trying to make sure we made a rule that matched
+			and ignored click events on any child of #global-calendar that we didn't want triggering this event,
+			I simply added ".global-calendar-toggle" to the only elements that I want to trigger this event. So now
+			we capture the event and double check that it has the class and only apply the toggle action if it does.
 		*/
 
-
-
-
-		// we use .get(0) here to grab the DOM element from the jQuery object, which $.contains() requires.
-		console.log($.contains($("#global-calendar-container").get(0), $(event.target).get(0)));
-
-		console.log($("#global-calendar-container"));
-		console.log($(event.target));
-
-		if ($.contains($("#global-calendar-container").get(0), $(event.target).get(0)))
-			return false;
-
-		$("#global-calendar-container").fadeToggle(sb_animSpeed);
+		if ($(event.target).hasClass("global-calendar-toggle"))
+			$("#global-calendar-container").fadeToggle(sb_animSpeed);
 	});
 
 	// toggle page charts
