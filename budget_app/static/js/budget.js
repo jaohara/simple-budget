@@ -4,7 +4,7 @@ var pieChart;
 var lineChartContext = $("#lineChartCanvas");
 var pieChartContext = $("#pieChartCanvas");
 
-var gl_animSpeed = 200;
+var sb_animSpeed = 200;
 
 
 // how do I guarantee that the length of the date range, the dailyIn array,
@@ -181,12 +181,18 @@ $(document).ready(function(){
 
 	bindDeleteButtonEvents();
 
+	function scrollToTop(){
+		// maybe slower than the anim speed?
+		$("html, body").animate({scrollTop: 0}, sb_animSpeed);
+		return true;
+	}
 	// event listeners for toolbar
 
 	// add transaction
 	$("#global-new-transaction").on("click", function(event){
 		event.preventDefault();
-		$("#transaction-jumbotron").slideToggle(gl_animSpeed);
+		scrollToTop();
+		$("#transaction-jumbotron").slideToggle(sb_animSpeed);
 	});
 
 	// datepicker
@@ -229,15 +235,20 @@ $(document).ready(function(){
 		if ($.contains($("#global-calendar-container").get(0), $(event.target).get(0)))
 			return false;
 
-		$("#global-calendar-container").fadeToggle(gl_animSpeed);
+		$("#global-calendar-container").fadeToggle(sb_animSpeed);
 	});
 
 	// toggle page charts
 	$("#global-chart-toggle").on("click", function(event){
 		event.preventDefault();
-		$("#charts-jumbotron").slideToggle(gl_animSpeed);
+		scrollToTop();
+		$("#charts-jumbotron").slideToggle(sb_animSpeed);
 	});
 
+
+	// pretty sure this is all obsolete now, going to mark this to be removed.
+
+	/*
 	$("a.section-toggle-link").on("click", function(event){
 		event.preventDefault();
 
@@ -271,7 +282,7 @@ $(document).ready(function(){
 		if (DEBUG)
 			console.log("Toggle completed.");
 	});
-
+	*/
 
 	// handler for transaction form
 	$("#transaction-form").on("submit", function(event){
@@ -310,7 +321,6 @@ $(document).ready(function(){
 
 				var dateRangeData = $("#date-range").datepicker().data('datepicker');
 
-
 				//make sure it exists within bounds to add
 				if (moment(data.transactionDate).isAfter(dateRangeData.selectedDates[0]) 
 					&& moment(data.transactionDate).isBefore(dateRangeData.selectedDates[1])) {
@@ -337,7 +347,34 @@ $(document).ready(function(){
 							return false;
 					});
 
-					if (moment($(adjacentRow).find(".transaction-table-row-date").attr("data-date")).isSame(data.transactionDate, 'day'))
+					/*
+						Weird bug happening here - the first transaction of the day is always added in the second-to-last
+						position rather than the first one. I need to observe this a little more.
+
+						What seems to be happening is that if the most recently logged transaction isn't today, all 
+						transactions logged today will be put right before it. So if the last logged transaction was the 8th
+						and I add three on the 9th, they will all be put in this order:
+
+							1. 8th 
+							2. 9th
+							3. 9th
+							4. 9th
+							5. 8th contd...
+
+						... with all of the new transactions being placed after the most recent date that isn't today.
+
+
+						I think I've solved it with adding the second check here, checking if the adjacentRowDataDate is
+						also before the added transaction's date. That seems to work. I'm wondering if this will introduce
+						further problems where a transaction might be logged a year and a day after the current date
+						or something like that
+
+					*/
+
+					var adjacentRowDataDate = $(adjacentRow).find(".transaction-table-row-date").attr("data-date");
+
+					if (moment(adjacentRowDataDate).isSame(data.transactionDate, 'day')
+						|| moment(adjacentRowDataDate).isBefore(data.transactionDate, 'day'))
 						var resultRow = $(data.transactionHtml).insertBefore(adjacentRow);
 					else
 						var resultRow = $(data.transactionHtml).insertAfter(adjacentRow);
@@ -353,15 +390,7 @@ $(document).ready(function(){
 		});
 	});
 
-
-	// test handler for actions on datepicker
-	/*
-	$("#date-range").on("select", function(){
-		console.log("Captured select event on input#date-range.");
-	});
-	*/
-
-	//initialize transdaction form datepicker
+	//initialize transaction form datepicker
 	//again - I really don't like this id name
 	$("#date-string").datepicker({
 		maxDate: new Date(),
