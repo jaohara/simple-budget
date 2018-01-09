@@ -106,21 +106,6 @@
 
 {% block content %}
 
-    <label for="date-range">Date Range: </label>
-    <!--
-    <input type="text" readonly id="date-range" 
-    data-date-format="mm/dd/yy" data-language="en" data-multiple-dates-separator=" - " data-range="true" 
-    value="{{date_range_start}} - {{date_range_end}}">
-    -->
-
-    {% if all_boolean %}
-    <a href="{% url 'transaction_log' all_boolean='all' %}" id="date-range-all" class="all-selected">
-    {% else %}
-    <a href="{% url 'transaction_log' all_boolean='all' %}" id="date-range-all">
-    {% endif %}
-        All Transactions
-    </a>
-
     <div id="table-wrapper">
         {% include 'budget_app/transaction_table.html' %}
     </div>

@@ -4,6 +4,9 @@ var pieChart;
 var lineChartContext = $("#lineChartCanvas");
 var pieChartContext = $("#pieChartCanvas");
 
+
+var activeSlideDown;
+
 var sb_animSpeed = 200;
 
 
@@ -133,14 +136,20 @@ $(document).ready(function(){
             	if (DEBUG)
                 	console.log(data);
 
+
+
                 // destroy and redraw the charts
-                lineChart.destroy();
-                pieChart.destroy();
-                
-                lineChart = drawLinechart(data.range_start_funds, data.pos_change_vals, data.neg_change_vals,
-                    data.dates_in_range, $("#lineChartCanvas"));
-                pieChart = drawPieChart(data.sorted_expense_cat, data.sorted_expense_val, 
-                    $("#pieChartCanvas"));
+                if (typeof pieChart != "undefined"){
+                	pieChart.destroy();
+                	pieChart = drawPieChart(data.sorted_expense_cat, data.sorted_expense_val, 
+                	    data.dates_in_range, $("#lineChartCanvas"));
+            	}
+
+            	if (typeof lineChart != "undefined"){
+	                lineChart.destroy();
+	                lineChart = drawLinechart(data.range_start_funds, data.pos_change_vals, data.neg_change_vals,
+	                    $("#pieChartCanvas"));
+               	}
 
                 // fill new stat values
                 for (var i = 0; i < data.statistics_list.length; i++)
@@ -180,20 +189,34 @@ $(document).ready(function(){
 	}
 
 	bindDeleteButtonEvents();
-
+	
 	function scrollToTop(){
 		// maybe slower than the anim speed?
 		$("html, body").animate({scrollTop: 0}, sb_animSpeed);
 		return true;
 	}
+
+
 	// event listeners for toolbar
 
-	// add transaction
-	$("#global-new-transaction").on("click", function(event){
+	// .section-toggle spans
+	$(".section-toggle").on("click", function(event){
 		event.preventDefault();
+
+		var target = $("#"+$(this).attr("toggle-target"));
+
 		scrollToTop();
-		$("#transaction-jumbotron").slideToggle(sb_animSpeed);
+		if (typeof activeSlideDown != "undefined" && $(target).is(activeSlideDown) == false)
+			$(activeSlideDown).slideUp(sb_animSpeed);
+
+		$(target).slideToggle(sb_animSpeed);
+
+		if($(target).is(":visible"))
+			activeSlideDown = $(target);
+		else
+			activeSlideDown = undefined;
 	});
+
 
 	// datepicker
 	$("#global-calendar").on("click", function(event){
@@ -209,52 +232,6 @@ $(document).ready(function(){
 		if ($(event.target).hasClass("global-calendar-toggle"))
 			$("#global-calendar-container").fadeToggle(sb_animSpeed);
 	});
-
-	// toggle page charts
-	$("#global-chart-toggle").on("click", function(event){
-		event.preventDefault();
-		scrollToTop();
-		$("#charts-jumbotron").slideToggle(sb_animSpeed);
-	});
-
-
-	// pretty sure this is all obsolete now, going to mark this to be removed.
-
-	/*
-	$("a.section-toggle-link").on("click", function(event){
-		event.preventDefault();
-
-		// is there a way to synchronize all of these animations better?
-		// I want to stage it so it scrolls, then after that the rest of the code executes.
-
-		$("html, body").animate({scrollTop: 0}, "slow");
-
-		var target = $("#"+$(this).attr("toggle-target"));
-
-		if (DEBUG)
-			console.log("click event recorded, toggling " + target + "...");
-
-		// check for and untoggle previously toggled element
-		$(".section-toggle-link").each(function(){
-			var currentElement = $("#" + $(this).attr("toggle-target"));
-
-
-			console.log(target.attr("id"));
-			console.log(currentElement.attr("id"));
-			console.log("is target id equal to currentElement id? " + (target.attr("id") == currentElement.attr("id")));
-			console.log("-----");
-
-			// toggle and hide current element 
-			if (currentElement.is(":visible") && currentElement.attr("id") != target.attr("id"))
-				currentElement.slideToggle(300);
-		});
-
-		target.slideToggle(300);
-
-		if (DEBUG)
-			console.log("Toggle completed.");
-	});
-	*/
 
 	// handler for transaction form
 	$("#transaction-form").on("submit", function(event){
@@ -450,6 +427,18 @@ $(document).ready(function(){
 			}
 		}
 	});
+
+
+    $("#global-date-range-all").on("click", function(event){
+        event.preventDefault();
+
+
+        var dateRangeData = $("#date-range").datepicker().data('datepicker');
+
+        //var allDateRangeArray = [new Date("{{date_start_bound}}"), new Date("{{date_end_iso}}")]
+        var allDateRangeArray = [dateRangeData.minDate, dateRangeData.maxDate]
+        $("#date-range").datepicker().data('datepicker').selectDate(allDateRangeArray);
+    });
 
 	$("#id_password_repeat").on("blur", function(){
 		// check to see if passwords match. very basic warning now, return to this later

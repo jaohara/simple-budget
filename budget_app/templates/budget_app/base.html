@@ -7,6 +7,7 @@
 
         <title>Simple Budget{% block pagetitle %}{% endblock %}</title>
 
+        <!-- bootstrap 4 -->
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
         <!-- ionicons -->
         <link rel="stylesheet" href="http://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
@@ -54,11 +55,13 @@
                 <ul class="navbar-nav">
 
                     <li class="nav-item btn-group app-toolbar">
-                        <span class="section-toggle-link btn btn-primary" id="global-new-transaction">
+                        <span class="section-toggle btn btn-primary" id="global-new-transaction"
+                              title="Add Transaction" toggle-target="transaction-jumbotron">
                             <span class="ion-icon ion-plus-round"></span>
                         </span>
 
-                        <span class="section-toggle-link btn btn-primary global-calendar-toggle" id="global-calendar">
+                        <span class="btn btn-primary global-calendar-toggle" id="global-calendar"
+                              title="Select Date Range">
                             <span class="ion-icon ion-calendar global-calendar-toggle"></span>
 
                             <div id="global-calendar-container">
@@ -76,7 +79,12 @@
                             </div>
                         </span>
 
-                        <span class="section-toggle-link btn btn-primary" id="global-chart-toggle">
+                        <span class="btn btn-primary" id="global-date-range-all" title="All Transactions">
+                            <span class="ion-icon ion-ios-infinite"></span>
+                        </span>
+
+                        <span class="section-toggle btn btn-primary" id="global-chart-toggle" 
+                              title="Display Data Charts" toggle-target="charts-jumbotron">
                             <span class="ion-icon ion-stats-bars"></span>
                         </span>
                     </li>
@@ -92,20 +100,6 @@
                             <span class="ion-icon ion-folder"></span> Categories
                         </a>
                     </li>
-
-                    <!--
-                    <li class="nav-item">
-                        <a class="nav-link section-toggle-link" href="" toggle-target="trends-jumbotron">
-                            Trends
-                        </a>
-                    </li>
-
-                    <li class="nav-item">
-                        <a class="nav-link section-toggle-link" href="" toggle-target="categories-jumbotron">
-                            Categories
-                        </a>
-                    </li>
-                    -->
                 </ul>
                 {% endif %}
 
@@ -199,29 +193,65 @@
         <script>
             var load_spinner_html = `{% include "budget_app/transaction_table_loader.html" %}`;
 
+            /*
+                1-9-18 - I need to go through and document all of this garbage so I can revise it.
+
+            */
+
             $(document).ready(function(){
 
-                lineChart = drawLinechart({{range_start_funds}}, {{pos_change_vals}}, {{neg_change_vals}}, 
-                    {{dates_in_range|safe}}, $("#lineChartCanvas"));
-                pieChart = drawPieChart({{sorted_expense_cat|safe}}, {{sorted_expense_val}}, $("pieChartCanvas"));
+                /*
+                    This check should see if #lineChartCanvas exists, and if so, create the initial line chart
+                    with the values passed to the template. That's the whole reason that this code is here. 
+                    All subsesquent calls via ajax receive the data in the javascript. Is it good to have
+                    this happen in two places?
 
+                    also, this causes some headaches when it's parsed without the template values existing - 
+                    it comes out as whitespace and commas which causes some js syntax errors and messes with other
+                    things defined here. There's probably a better way for this. Maybe I should only have the
+                    charts load via ajax after the page has loaded? Am I really trying to make a non-ajax version of
+                    this?
+
+                    Worth noting that JS needs to be enabled in the first place to both render these charts and 
+                    toggle the display of the div that contains the canvas.
+                */
+                if ($("#lineChartCanvas").length > 0){
+                    lineChart = drawLinechart({{range_start_funds}}, {{pos_change_vals}}, {{neg_change_vals}}, 
+                        {{dates_in_range|safe}}, $("#lineChartCanvas"));
+                }
+
+                /*
+                    Same situation here but for #pieChartCanvas. Results in similar errors, but in this site's
+                    current form the only page that doesn't load the pieChart template values also doesn't load
+                    the lineChart values so the syntax errors from the above line have already done their job.
+                
+                    I'm trying to make my views more specific now, so I'm commenting this out to avoid that 
+                    issue.
+                */
+
+                /*
+                if ($("#pieChartCanvas").length >0)
+                    pieChart = drawPieChart({{sorted_expense_cat|safe}}, {{sorted_expense_val}}, $("pieChartCanvas"));
+                */
+
+                /*
+                    This should be universal - #date-range is the div on the navbar that contains the calendar 
+                    datepicker, and I want to make this universal. 
+
+                    This might be my first step - making sure the date picked by the datepicker is always universal.
+                */
                 var dateRangeArray = [new Date("{{date_start_iso}}"), new Date("{{date_end_iso}}")];
                 $("#date-range").datepicker().data('datepicker').selectDate(dateRangeArray);
                 $("#date-range").datepicker().data('datepicker').update('minDate', new Date("{{date_start_bound}}"));
 
+
+                /*
+                    This is only relevant for pages that have the "add transaction" option. Which pages are these? 
+
+                    Should I have this transaction-add functionality on every page?
+                */
                 $("#date-string").datepicker().data('datepicker').selectDate(new Date());
                 $("#date-string").datepicker().data('datepicker').update('minDate', new Date("{{date_start_bound}}"));
-
-                //If JS is enabled, make sure the "All Time" link makes an ajax request
-                $("#date-range-all").on("click", function(event){
-                    event.preventDefault();
-
-                    var dateRangeData = $("#date-range").datepicker().data('datepicker');
-
-                    //var allDateRangeArray = [new Date("{{date_start_bound}}"), new Date("{{date_end_iso}}")]
-                    var allDateRangeArray = [dateRangeData.minDate, dateRangeData.maxDate]
-                    $("#date-range").datepicker().data('datepicker').selectDate(allDateRangeArray); 
-                });
             });
         </script>
 

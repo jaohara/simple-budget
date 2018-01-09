@@ -55,7 +55,14 @@ def transaction_log(request, sort_order="-date", date_range_start=None, date_ran
 	initial_funds = request.user.userrecord.initial_funds
 	
 	form = TransactionForm()
-	max_display_categories = request.user.userrecord.max_display_categories
+
+
+
+
+
+	#	=================================
+	#	Begin Date selection related code
+	#	=================================
 
 	curr_datetime = timezone.localtime(timezone.now())
 
@@ -94,25 +101,48 @@ def transaction_log(request, sort_order="-date", date_range_start=None, date_ran
 			date_added = date_range_start + dt.timedelta(days=day)
 			dates_in_range.append(date_added.strftime("%-m/%-d"))
 
+
+	#	==================
+	#	End Date Selection
+	#	==================
+
+
+
+
+
 	all_transactions = Transaction.objects.filter(user__pk=request.user.pk)
 	range_transactions = all_transactions.filter(date__gte=date_range_start.date(), 
 						  date__lte=date_range_end).order_by(sort_order, "-created_date")
 
-	funds_change = sum(transaction.value for transaction in all_transactions)
 
 	# this is used for the charts so they have an accurate starting point for the collection of offsets
 	range_start_funds = initial_funds + sum(transaction.value for \
 						transaction in all_transactions.filter(date__lt=date_range_start.date()))
 	
+
+
+
+
+	# ==================================================
+	# Check to make sure if funds difference is accurate
+	# ==================================================
+
+	funds_change = sum(transaction.value for transaction in all_transactions)
 	current_funds_check = initial_funds + funds_change
 
 	if request.user.userrecord.current_funds != current_funds_check:
 		request.user.userrecord.current_funds = current_funds_check
 		request.user.userrecord.save()
 
-	daily_change_dict = {date:{"pos":0, "neg":0} for date in dates_in_range}
+	# =========
+	# End Check
+	# =========
 
-	category_dict = {"pos":{}, "neg":{}}
+
+
+
+
+	daily_change_dict = {date:{"pos":0, "neg":0} for date in dates_in_range}
 
 	for transaction in range_transactions:
 		sign = "pos" if transaction.value > 0 else "neg"
@@ -122,17 +152,7 @@ def transaction_log(request, sort_order="-date", date_range_start=None, date_ran
 		date = timezone.localtime(transaction.date).strftime("%-m/%-d")
 
 		daily_change_dict[date][sign] += transaction.value
-
-		if category in category_dict[sign].keys():
-			category_dict[sign][category] += transaction.value
-		else:
-			category_dict[sign][category] = transaction.value
 	
-	sorted_expense_cat = sorted(category_dict["neg"], key=category_dict["neg"].get, reverse=False)
-	sorted_income_cat = sorted(category_dict["pos"], key=category_dict["pos"].get, reverse=False)
-	# make values positive for proper display in pie chart
-	sorted_expense_val = [float(category_dict["neg"][k]) * -1.0 for k in sorted_expense_cat]
-	sorted_income_val = [float(category_dict["pos"][k]) for k in sorted_income_cat] 
 
 	pos_change_dict = {date:daily_change_dict[date]["pos"] for date in daily_change_dict.keys()}
 	neg_change_dict = {date:daily_change_dict[date]["neg"] for date in daily_change_dict.keys()}
@@ -168,7 +188,7 @@ def transaction_log(request, sort_order="-date", date_range_start=None, date_ran
 	"""
 
 	render_context = {
-					  'all_boolean': all_boolean,
+					  'all_boolean': bool(all_boolean),
 					  'daily_sums': daily_sums,
 				  	  'date_range_start': date_range_start.strftime("%-m/%d/%y"),
 				  	  'date_range_end': date_range_end.strftime("%-m/%d/%y"),
@@ -176,14 +196,9 @@ def transaction_log(request, sort_order="-date", date_range_start=None, date_ran
 				  	  'date_start_bound': user_joined.isoformat(),
 				  	  'date_start_iso': date_range_start.isoformat(),
 					  'dates_in_range': dates_in_range,
-					  'funds_change': funds_change,
 				  	  'neg_change_vals': conv_neg_change,
 				  	  'pos_change_vals': conv_pos_change,
 				  	  'range_start_funds': range_start_funds,
-					  'sorted_expense_cat': sorted_expense_cat[:max_display_categories],
-					  'sorted_expense_val': sorted_expense_val[:max_display_categories],
-					  'sorted_income_cat': sorted_income_cat[:max_display_categories],
-					  'sorted_income_val': sorted_income_val[:max_display_categories],
 				  	  'username': request.user.username,
 				  	  }
 
